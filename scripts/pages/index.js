@@ -3,8 +3,7 @@ async function getPhotographers() {
     const response = await fetch('./data/photographers.json');
     const data = await response.json();
     console.log(data);
-    const photographer = data.getPhotographers(getParamId());
-    return photographer;
+    return data;
 }
 
 async function displayData(photographers) {
