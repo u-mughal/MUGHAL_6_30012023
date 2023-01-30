@@ -1,3 +1,4 @@
+//Création d'un objet photographe avec les propeétés extraites à partir des données fournies.
 function photographerFactory(data) {
     const { id, portrait, name, city, country, tagline, price, totalLikes } =
         data;
