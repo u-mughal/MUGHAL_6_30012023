@@ -2,14 +2,18 @@ function photographerFactory(data) {
     const { id, portrait, name, city, country, tagline, price, totalLikes } = data;
     const picture = `./assets/photographers/${portrait}`;
 
-
-    // Function création de carte photographe 
+    // Fonction pour créer la carte d'un photographe 
     function generatePhotographerCard() {
         const article = document.createElement('article');
         article.setAttribute("id", id);
 
+        // Utilisation de la méthode searchParams pour définir le lien
+        const params = new URL(document.location).searchParams;
+        params.set("id", id);
+        const href = `./photographer.html?${params}`;
+
         const link = document.createElement('a');
-        link.setAttribute("href", `./photographer.html?id=${id}`);
+        link.setAttribute("href", href);
 
         const img = document.createElement('img');
         img.setAttribute("src", picture);
@@ -38,4 +42,5 @@ function photographerFactory(data) {
     }
 
     return { generatePhotographerCard };
+
 }
