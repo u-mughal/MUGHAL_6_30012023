@@ -23,7 +23,7 @@ function photographerFactory(data) {
       </a>
       <span>${city}, ${country}</span><br />
       <strong>${tagline}</strong><br />
-      ${price}€/day
+      ${price}€/jour
       `
     );
 
