@@ -4,6 +4,7 @@ function photographerFactory(data) {
 
   // Fonction pour créer la carte d'un photographe 
   function generatePhotographerCard() {
+
     // Création de l'élément HTML article
     const article = document.createElement('article');
 
@@ -31,6 +32,44 @@ function photographerFactory(data) {
     return article;
   }
 
-  // Retour de l'objet avec la fonction generatePhotographerCard
-  return { generatePhotographerCard };
-}
+  // Fonction pour créer l'en-tête du profil photographe
+  function generatePhotographerHeader() {
+
+    // Création de l'élément HTML article
+    const wrapper = document.createElement("article");
+
+    // Ajout de la classe `wrapper` à l'élément
+    wrapper.classList.add("wrapper");
+
+    // Insertion du HTML à l'intérieur de l'article
+    wrapper.insertAdjacentHTML(
+
+      "beforeend",
+      `
+            <div class="text">
+              <h1>${name}</h1>
+              <p>
+                <span>
+                  ${city}, ${country}
+                </span>
+                <br />
+                ${tagline}
+              </p>
+            </div>
+            <button class="contact_button" onclick="displayModal()" id="btn_open_modal">
+              Contactez-moi
+            </button>
+            <img src="./assets/photographers/${portrait}" 
+              alt=""
+            />
+        `
+    );
+    // Retour de l'élément article
+    return wrapper;
+  }
+  // Retour de l'objet avec la fonction generatePhotographerCard et generatePhotographerHeader
+  return {
+    generatePhotographerCard,
+    generatePhotographerHeader
+  };
+};
