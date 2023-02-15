@@ -42,7 +42,10 @@
   font-size: 24px;
 }
 
+/* CONTACT HEADER */
+
 .contact_button {
+  display: block;
   font-size: 20px;
   font-weight: bold;
   color: white;
@@ -50,9 +53,27 @@
   width: 170px;
   height: 70px;
   border: none;
-  background-color: #901C1C;
+  background-color: #901c1c;
   border-radius: 5px;
   cursor: pointer;
+  transition: all 1000ms;
+}
+
+.contact_button:hover {
+  color: black;
+  background-color: #d3573c;
+}
+
+#contact_modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  background-color: rgba(26, 39, 156, 0.4);
 }
 
 .modal {
