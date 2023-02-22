@@ -138,3 +138,15 @@ const Validation = (input) => {
             console.log(`${input} n'existe pas`);
     }
 };
+
+// Attendre que le document soit chargé
+document.addEventListener("DOMContentLoaded", () => {
+    form.addEventListener("submit", ValidationSubmit);
+
+    // Ajouter des événements de blur et focus sur tous les inputs
+    allInput.forEach((input) => {
+        input.addEventListener("blur", () => Validation(input.id));
+        input.addEventListener("focus", () => toggleErrorMessages(input, false));
+    });
+
+});
