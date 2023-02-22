@@ -64,3 +64,55 @@ const toggleErrorMessages = (element, etat) => {
     element.parentNode.dataset.visible = etat;
 };
 
+// Les champs prenom et nom doivent comporter un minimum de deux caractères et ne doivent pas etre vides.
+const ValidationFirstAndLast = (inputId) => {
+    const element = form.elements[inputId];
+    const value = element.value.trim();
+
+    if (value.length < 2) {
+        console.log(`Le champ ${inputId} doit contenir au moins 2 caractères.`);
+        element.parentNode.dataset.error = "doit contenir plus de 2 caractéres";
+        toggleErrorMessages(element, true);
+        return false;
+    }
+
+    const forbiddenChars = ["é", "è", "ê", "à", "â", "ù", "ô", "î", "ç"];
+    const isForbiddenChar = forbiddenChars.some((char) => value.includes(char));
+
+    if (isForbiddenChar) {
+        console.log(`Le champ ${inputId} contient des caractères interdits.`);
+        element.parentNode.dataset.error = `Votre ${inputId === "first" ? "prénom" : "nom"
+            } doit être écrit sans accent.`;
+        toggleErrorMessages(element, true);
+        return false;
+    }
+
+    const hasConsecutiveSpaces = value.includes("  ");
+    if (hasConsecutiveSpaces) {
+        console.log(`Le champ ${inputId} contient des espaces consécutifs.`);
+        element.parentNode.dataset.error = `Notre système est incapable de traiter les ${inputId === "first" ? "prénoms" : "noms"
+            } qui commence par 2 fois espace.`;
+        toggleErrorMessages(element, true);
+        return false;
+    }
+
+    toggleErrorMessages(element, false);
+    return true;
+};
+
+// Validation d'une adresse mail 
+const ValidationEmail = () => {
+    const email = form.elements.email;
+    const atPos = email.value.indexOf("@");
+    const dotPos = email.value.lastIndexOf(".");
+    if (atPos < 1 || dotPos < atPos + 2 || dotPos + 2 >= email.value.length) {
+        console.log("L'adresse e-mail est invalide");
+        toggleErrorMessages(email, true);
+        return false;
+    } else {
+        console.log("L'adresse e-mail est valide");
+        toggleErrorMessages(email, false);
+        return true;
+    }
+};
+
