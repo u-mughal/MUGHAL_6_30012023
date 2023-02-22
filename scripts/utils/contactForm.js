@@ -28,3 +28,17 @@ function closeModal() {
     form.reset();
 }
 
+// Cette fonction affiche le message de remerciement et masque le formulaire.
+const showthanks_field = () => {
+    document.querySelectorAll(".form-data").forEach(element => element.classList.add("disabled"));
+    document.querySelector(".thanks-field").style.display = "block";
+    document.querySelector("#btnSubmit").style.display = "none";
+};
+
+// Cette fonction masque le message de remerciement et réactive le formulaire.
+const hidethanks_field = () => {
+    document.querySelectorAll(".form-data").forEach(element => element.classList.remove("disabled"));
+    document.querySelector(".thanks-field").style.display = "none";
+    document.querySelector("#btnSubmit").style.display = "block";
+};
+
