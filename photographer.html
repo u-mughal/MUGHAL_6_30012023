@@ -44,35 +44,38 @@
         <img src="assets/icons/close.svg" onclick="closeModal()" aria-label="close form contact"
           alt="close form contact" class="close-modal" role="button" />
       </header>
-        
-          <form novalidate name="contact" id="contact">
-            <div class="form-data">
-              <label for="first">Prénom</label>
-              <input class="text-control" type="text" id="first" name="first" aria-required="true" />
-            </div>
-            <div class="form-data">
-              <label for="last">Nom</label>
-              <input class="text-control" type="text" id="last" name="last" aria-required="true" />
-            </div>
-            <div class="form-data" data-error="Adresse email invalide">
-              <label for="email">E-mail</label>
-              <input class="text-control" type="email" id="email" name="email" aria-required="true" />
-            </div>
-            <div class="form-data" data-error="Décrivez moi votre projet">
-              <label for="request">Votre message</label>
-              <textarea class="text-control" id="request" name="request" aria-required="true"></textarea>
-            </div>
-            <div class="thanks-field">Merci pour votre demande</div>
-            <input class="contact_button" type="submit" value="Envoyer" id="btnSubmit" />
-          </form>
-        </div>
-      </div>
 
-    <script src="/scripts/factories/photographer.js"></script>
-    <script src="/scripts/pages/photographer.js"></script>
-    <script src="./scripts/api/api.js"></script>
-    <script src="/scripts/utils/contactForm.js"></script>
-    <script src="/scripts/utils/getId.js"></script>
-    
-  </body>
+      <form novalidate name="contact" id="contact">
+        <div class="form-data">
+          <label for="first">Prénom</label>
+          <input class="text-control" type="text" id="first" name="first" aria-required="true" />
+        </div>
+        <div class="form-data">
+          <label for="last">Nom</label>
+          <input class="text-control" type="text" id="last" name="last" aria-required="true" />
+        </div>
+        <div class="form-data" data-error="Adresse email invalide">
+          <label for="email">E-mail</label>
+          <input class="text-control" type="email" id="email" name="email" aria-required="true" />
+        </div>
+        <div class="form-data" data-error="Décrivez moi votre projet">
+          <label for="request">Votre message</label>
+          <textarea class="text-control" id="request" name="request" aria-required="true"></textarea>
+        </div>
+        <div class="thanks-field">Merci pour votre demande</div>
+        <input class="contact_button" type="submit" value="Envoyer" id="btnSubmit" />
+      </form>
+    </div>
+  </div>
+
+  <script src="./scripts/api/api.js"></script>
+
+  <script src="/scripts/factories/photographer.js"></script>
+  <script src="/scripts/pages/photographer.js"></script>
+
+  <script src="/scripts/utils/contactForm.js"></script>
+  <script src="/scripts/utils/getId.js"></script>
+
+</body>
+
 </html>
