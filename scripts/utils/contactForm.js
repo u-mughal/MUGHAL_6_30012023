@@ -149,4 +149,10 @@ document.addEventListener("DOMContentLoaded", () => {
         input.addEventListener("focus", () => toggleErrorMessages(input, false));
     });
 
+    // Événement keydown pour la validation avec la touche Entrée et pour fermer le modal avec la touche Échap
+    document.addEventListener("keydown", (event) => {
+        const isModalOpen = modal.attributes["aria-hidden"].value === "false";
+        if (isModalOpen && event.key === "Enter") ValidationSubmit(event);
+        if (isModalOpen && event.key === "Escape") closeModal();
+    });
 });
