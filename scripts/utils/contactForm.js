@@ -116,3 +116,25 @@ const ValidationEmail = () => {
     }
 };
 
+// Cette fonction permet de valider le champ de saisie
+const ValidationRequest = () => {
+    const request = form.elements.request;
+    return request.value.length < 5
+        ? (toggleErrorMessages(request, true), false)
+        : (toggleErrorMessages(request, false), true);
+};
+
+// Fonction de validation en switch sur le champ de l'input
+const Validation = (input) => {
+    switch (input) {
+        case "first":
+        case "last":
+            return ValidationFirstAndLast(input);
+        case "email":
+            return ValidationEmail();
+        case "request":
+            return ValidationRequest();
+        default:
+            console.log(`${input} n'existe pas`);
+    }
+};
