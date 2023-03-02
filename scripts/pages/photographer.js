@@ -59,7 +59,7 @@ function clonePhotographer(photographer) {
 
 // Cette fonction affiche les cartes de portfolio à partir du tableau de médias fusionnés.
 function displayPortfolioCards(media) {
-    const wrapper = document.querySelector(".achievements_section");
+    const wrapper = document.querySelector(".gallery-section");
     media.forEach((element, index) => {
         const factoryPortfolio = portfolioFactory(element);
         const portfolioCard = factoryPortfolio.generatePortfolioCard(index);

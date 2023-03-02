@@ -1,3 +1,4 @@
+@import url("gallery.css");
 @import url("photographer.css");
 
 body {
@@ -66,8 +67,8 @@ h1 {
 
 .photographer_section article a {
     text-decoration: none;
-	display: flex;
-	align-items: center;
-	flex-direction: column;
-	line-height: 0px
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    line-height: 0px
 }
