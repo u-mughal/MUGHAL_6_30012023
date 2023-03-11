@@ -2,12 +2,9 @@ function portfolioFactory(data) {
   // Décomposition de l'objet 'data' pour une utilisation plus facile
   const { date, id, name, title, image, video, likes, liked } = data;
 
-  /*----------------------- Function generatePortfolioCard -----------------------*/
-
-  // Renommage de la fonction pour une meilleure compréhension
   // Définition de la fonction en dehors de l'objet retourné pour éviter la création de la fonction à chaque appel
   function generatePortfolioCard(index) {
-    // Création de l'élément 'article'
+    // Création de l'élément 'article' avec les attributs nécessaires
     const article = document.createElement("article");
     article.setAttribute("id", id);
     article.setAttribute("data-id", id);
@@ -20,15 +17,15 @@ function portfolioFactory(data) {
     article.setAttribute("data-likes", likes);
     article.setAttribute("data-liked", liked);
 
-    // Création de l'élément 'a' et ajout des attributs
+    // Création d'un lien pour contenir le média généré à partir des données
     const link = document.createElement("a");
     link.href = "#";
-    link.onclick = () => displaycarousel(index);
     link.tabIndex = 0;
+    link.setAttribute("onclick", `displaycarousel(${index})`);
     link.appendChild(generateMedia(data));
 
-    // Création du texte d'accomplissement
-    const achievementText = `
+    // Génération du texte de la galerie en utilisant les données fournies et une icône de coeur qui peut être cliquée pour ajouter ou supprimer une indication de like
+    const GalleryText = `
       <p>      
         ${title} 
         <span>
@@ -49,13 +46,14 @@ function portfolioFactory(data) {
       </p>
     `;
 
-    // Ajout des éléments au 'article' avec la méthode 'insertAdjacentHTML'
-    article.insertAdjacentHTML("beforeend", link.outerHTML + achievementText);
+    // Ajout du lien et du texte de la galerie à l'article
+    article.insertAdjacentHTML("beforeend", link.outerHTML + GalleryText);
 
+    // Retourne l'article avec les données et le texte de la galerie
     return article;
   }
 
-  // Retour de l'objet avec la fonction 'generatePortfolioCard'
+  // Retourne un objet à partir des données fournies
   return {
     generatePortfolioCard,
   };
