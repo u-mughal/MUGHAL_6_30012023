@@ -171,7 +171,7 @@ form #request {
 }
 
 /* Styles pour la carte de coût */
-.cost-card {
+.sticky-price-tag {
   position: sticky;
   bottom: 0;
   background: #db8876;
@@ -184,7 +184,7 @@ form #request {
   min-width: 350px;
 }
 
-.cost-card p {
+.sticky-price-tag p {
   display: flex;
   justify-content: space-between;
   margin: 0;
