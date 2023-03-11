@@ -4,14 +4,8 @@ function photographerFactory(data) {
 
   // Fonction pour créer la carte d'un photographe 
   function generatePhotographerCard() {
-
-    // Création de l'élément HTML article
     const article = document.createElement('article');
-
-    // Attribution de l'ID à l'article
     article.setAttribute("id", id);
-
-    // Insertion du HTML à l'intérieur de l'article
     article.insertAdjacentHTML(
       "beforeend",
       `
@@ -27,23 +21,14 @@ function photographerFactory(data) {
       ${price}€/jour
       `
     );
-
-    // Retour de l'élément article
     return article;
   }
 
   // Fonction pour créer l'en-tête du profil photographe
   function generatePhotographerHeader() {
-
-    // Création de l'élément HTML article
     const wrapper = document.createElement("article");
-
-    // Ajout de la classe `wrapper` à l'élément
     wrapper.classList.add("wrapper");
-
-    // Insertion du HTML à l'intérieur de l'article
     wrapper.insertAdjacentHTML(
-
       "beforeend",
       `
             <div class="text">
@@ -64,12 +49,30 @@ function photographerFactory(data) {
             />
         `
     );
-    // Retour de l'élément article
     return wrapper;
   }
-  // Retour de l'objet avec la fonction generatePhotographerCard et generatePhotographerHeader
+  // Fonction qui génère le contenu HTML pour le compteur de likes
+  function generateStickyForTotalLikes() {
+    const wrapper = document.createElement("aside");
+    wrapper.classList.add("sticky-price-tag");
+    const stickyTotalLikes = `
+        <p>
+          <span>
+            <span class="total-likes">
+              ${totalLikes.toString()}
+            </span> 
+            <i class="fa-solid fa-heart" aria-hidden="true"></i> 
+          </span>
+          ${price}€ / jour
+        </p>
+      `;
+    wrapper.innerHTML = stickyTotalLikes;
+    return wrapper;
+  }
+  // Retour de l'objet avec la fonction generatePhotographerCard, generatePhotographerHeader et generateStickyForTotalLikes
   return {
     generatePhotographerCard,
-    generatePhotographerHeader
+    generatePhotographerHeader,
+    generateStickyForTotalLikes,
   };
 };
