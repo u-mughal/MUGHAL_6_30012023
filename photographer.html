@@ -31,12 +31,23 @@
           aria-expanded="false">
           <div class="pseudo_value">Popularité</div>
         </button>
+        <ul class="listbox" role="listbox" id="trie_list">
+          <li class="option" id="option-0" role="option" tabindex="-1" onclick="orderBy('likes')">
+            Popularité
+          </li>
+          <li class="option" id="option-1" role="option" tabindex="-1" onclick="orderBy('date')">
+            Date
+          </li>
+          <li class="option" role="option" id="option-2" tabindex="-1" onclick="orderBy('title')">
+            Title
+          </li>
+        </ul>
       </div>
     </div>
     <section class="gallery-section" aria-hidden="false"></section>
   </main>
 
-  <!-- Modale de contact  -->
+  <!--Modal form contact-->
   <div id="contact_modal" aria-hidden="true" role="dialog">
     <div class="modal">
       <header>
@@ -46,40 +57,48 @@
       </header>
 
       <form novalidate name="contact" id="contact">
-        <div class="form-data">
+        <div class="formData">
           <label for="first">Prénom</label>
           <input class="text-control" type="text" id="first" name="first" aria-required="true" />
+          
         </div>
-        <div class="form-data">
+        <div class="formData">
           <label for="last">Nom</label>
           <input class="text-control" type="text" id="last" name="last" aria-required="true" />
         </div>
-        <div class="form-data" data-error="Adresse email invalide">
+        <div class="formData" data-error="Adresse email invalide">
           <label for="email">E-mail</label>
           <input class="text-control" type="email" id="email" name="email" aria-required="true" />
         </div>
-        <div class="form-data" data-error="Décrivez moi votre projet">
+        <div class="formData" data-error="Décrivez moi votre projet">
           <label for="request">Votre message</label>
           <textarea class="text-control" id="request" name="request" aria-required="true"></textarea>
         </div>
-        <div class="thanks-field">Merci pour votre demande</div>
+        <div class="thanks">Merci pour votre Demande</div>
         <input class="contact_button" type="submit" value="Envoyer" id="btnSubmit" />
       </form>
     </div>
   </div>
 
-  <script src="./scripts/factories/api.js"></script>
+  <!--lightbox-->
+  <div class="lightbox-photographer" aria-hidden="true">
+    <span class="fa-solid fa-xmark" onclick="closelightbox()" aria-hidden="true" title="close lightbox"></span>
+    <ul class="lightbox" aria-label="Our selection of Recipes" id="lightbox-list"></ul>
+  </div>
 
-  <script src="/scripts/factories/photographer.js"></script>
-  <script src="/scripts/factories/portfolio.js"></script>
+  
+  <script src="./scripts/factories/lightbox.js"></script>
+  <script src="./scripts/factories/photographer.js"></script>
+  <script src="./scripts/factories/portfolio.js"></script>
+  
 
-  <script src="/scripts/pages/photographer.js"></script>
+  
+  <script src="./scripts/utils/contactForm.js"></script>
+  <script src="./scripts/utils/generateMedia.js"></script>
+  <script src="./scripts/utils/getId.js"></script>
 
-  <script src="/scripts/utils/contactForm.js"></script>
-  <script src="/scripts/utils/generateMedia.js"></script>
-  <script src="/scripts/utils/getId.js"></script>
-  <script src="/scripts/utils/like.js"></script>
-
+  
+  <script src="./scripts/pages/photographer.js"></script>
 </body>
 
 </html>

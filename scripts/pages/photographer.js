@@ -1,23 +1,5 @@
 // Cette fonction récupère les données du photographe et des médias à partir du fichier JSON
 async function fetchData() {
-    const data = api("./data/photographers.json");
-    const [photographer, media] = await Promise.all([
-        data.getPhotographer(getParamId()),
-        data.getMedia(getParamId()),
-    ]);
-    return { photographer, media };
-}
-
-// Cette fonction récupère uniquement les données du photographe en utilisant fetch()
-async function getDataPhotographer() {
-    const response = await fetch('./data/photographers.json');
-    const data = await response.json();
-    const photographer = data.photographers.find(p => p.id == getParamId());
-    return photographer;
-}
-
-// Cette fonction récupère uniquement les données des médias en utilisant fetch()
-async function getMedia() {
     try {
         const response = await fetch('./data/photographers.json');
         if (!response.ok) {
@@ -25,19 +7,35 @@ async function getMedia() {
         }
         const data = await response.json();
         const photographerId = getParamId();
+        const photographer = data.photographers.find(p => p.id == photographerId);
+        if (!photographer) {
+            throw new Error(`Photographer with id ${photographerId} not found`);
+        }
         const media = data.media.filter(m => m.photographerId == photographerId);
-        return media;
+        return { photographer, media };
     } catch (error) {
-        console.error('Error getting media:', error);
-        return [];
+        console.error('Error getting data:', error);
+        return { photographer: null, media: [] };
     }
+}
+
+// Cette fonction récupère uniquement les données du photographe en utilisant la fonction fetchData()
+async function getDataPhotographer() {
+    const { photographer } = await fetchData();
+    return photographer;
+}
+
+// Cette fonction récupère uniquement les données des médias en utilisant la fonction fetchData()
+async function getMediaFromJson() {
+    const { media } = await fetchData();
+    return media;
 }
 
 // Cette fonction affiche l'en-tête du photographe
 function DisplayPortfolioHeader(photographer) {
     const wrapper = document.querySelector(".photograph-header");
-    const { generatePhotographerHeader } = photographerFactory(photographer);
-    const headerPhotographer = generatePhotographerHeader();
+    const factoryPhotographer = photographerFactory(photographer);
+    const headerPhotographer = factoryPhotographer.generatePhotographerHeader();
     wrapper.appendChild(headerPhotographer);
 }
 
@@ -66,11 +64,14 @@ function generatePortfolioCards(media) {
     return portfolioCards;
 }
 
-// Cette fonction affiche les cartes de portfolio
+// Cette fonction affiche l'en-tête du photographe
 function DisplayPortfolioCard(media) {
     const wrapper = document.querySelector(".gallery-section");
-    const portfolioCards = generatePortfolioCards(media);
-    wrapper.append(...portfolioCards);
+    media.forEach((element, index) => {
+        const factoryPortfolio = portfolioFactory(element);
+        const portfolioCard = factoryPortfolio.generatePortfolioCard(index);
+        wrapper.appendChild(portfolioCard);
+    });
 }
 
 // Cette fonction met à jour une carte de portfolio spécifique
@@ -82,6 +83,8 @@ function UpdatePortfolioCard(media, idCard) {
     wrapper.replaceWith(portfolioCard);
     addListenerEventKey();
 }
+
+
 
 // Fonction "calculateTotalLikes" qui calcule le nombre total de "likes" pour toutes les photos d'un photographe.
 function calculateTotalLikes(media) {
@@ -129,21 +132,6 @@ async function updateCardLikes(idCard, add) {
     await addStickyTotalLikesToBodyAfterLike();
 }
 
-function makecarousel(media) {
-    const wrapper = document.querySelector("#carousel-list");
-    media.forEach((element, index) => {
-        const factorycarousel = carouselFactory(element);
-        const item = factorycarousel.createItemcarousel(index);
-        wrapper.appendChild(item);
-    });
-}
-
-function initcarouselManager() {
-    let script = document.createElement("script");
-    script.src = "./scripts/utils/carousel.js";
-    document.head.appendChild(script);
-}
-
 // Transforme les données des médias pour les associer au photographe et renvoie un tableau d'objets.
 function transformData(data, photographerFirstName) {
     return data.map((gallery, index) => ({
@@ -158,29 +146,49 @@ function transformData(data, photographerFirstName) {
     }));
 }
 
-// Initialise la page en récupérant les données du photographe et des médias, puis en affichant les informations sur la page.
+
 async function init() {
-    const [dataPhotographer, dataMedia] = await Promise.all([getDataPhotographer(), getMedia()]);
+    const [dataPhotographer, dataMedia] = await Promise.all([getDataPhotographer(), getMediaFromJson()]);
     const totalLikes = calculateTotalLikes(dataMedia);
-    DisplayPortfolioHeader(addTotalLikesToPhotographer(dataPhotographer, totalLikes));
+    const mergeDataPhotographer = addTotalLikesToPhotographer(dataPhotographer, totalLikes);
+    const mergeDataMedia = mergeMedia(dataPhotographer, dataMedia);
+
+    DisplayPortfolioHeader(mergeDataPhotographer);
     setContactName(dataPhotographer);
-    DisplayPortfolioCard(mergeMedia(dataPhotographer, dataMedia));
-    addStickyTotalLikesToBody(addTotalLikesToPhotographer(dataPhotographer, totalLikes));
+    DisplayPortfolioCard(mergeDataMedia);
+    addStickyTotalLikesToBody(mergeDataPhotographer);
+
 
 }
 
-// Ajoute un écouteur d'événements pour capturer les entrées clavier et simuler un clic sur l'icône de coeur.
 function addListenerEventKey() {
-    document.querySelector(".gallery-section").addEventListener("keydown", (event) => {
-        if (event.key === "Enter" && event.target.classList.contains("fa-heart")) event.target.click();
+    const gallerySection = document.querySelector(".gallery-section");
+    const articleLinks = gallerySection.querySelectorAll("article a");
+    const heartIcons = gallerySection.querySelectorAll("article .fa-heart");
+
+    const handleCardKeyDown = (event) => {
+        const lightbox = document.querySelector(".lightbox-photographer");
+        const lightboxIsClose = lightbox.getAttribute("aria-hidden");
+
+        if (event.key === "Enter" && lightboxIsClose) {
+            event.target.click();
+        }
+    };
+
+    articleLinks.forEach((link) => {
+        link.addEventListener("keydown", handleCardKeyDown, { once: true });
+    });
+
+    heartIcons.forEach((icon) => {
+        icon.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                event.target.click();
+            }
+        });
     });
 }
 
-// Initialise la page et ajoute un écouteur d'événements pour capturer les entrées clavier.
-async function initPage() {
+document.addEventListener("DOMContentLoaded", async () => {
     await init();
     addListenerEventKey();
-}
-
-// Attend le chargement complet de la page avant d'initialiser la page et d'ajouter l'écouteur d'événements.
-document.addEventListener("DOMContentLoaded", initPage);
+});
