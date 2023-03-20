@@ -2,29 +2,40 @@
 <html lang="fr">
 
 <head>
+  <!-- inclusion de la feuille de style CSS -->
   <link href="css/style.css" rel="stylesheet" type="text/css" />
+  <!-- spécification de l'encodage du document -->
   <meta charset="utf-8">
+  <!-- icône de favicon -->
   <link rel="icon" type="image/png" href="assets/favicon.png">
+  <!-- inclusion de la police de caractères -->
   <link href="https://fonts.googleapis.com/css?family=DM+Sans&display=swap" rel="stylesheet">
+  <!-- titre de la page -->
   <title>Fisheye</title>
 </head>
 
 <body>
+  <!-- en-tête de la page -->
   <header class="header" role="banner">
+    <!-- lien vers la page d'accueil avec une étiquette personnalisée pour les technologies d'assistance -->
     <a href="index.html" aria-label="Fisheye">
-      <img src="assets/images/logo.png" class="logo" alt="Fisheye Home page" />
+      <!-- logo de l'entreprise avec une description textuelle -->
+      <img src="assets/images/logo.png" class="logo" alt="Logo de l'enseigne Fisheye.">
     </a>
+    <!-- titre principal de la page -->
     <h1>Nos photographes</h1>
   </header>
 
+  <!-- section principale de la page -->
   <main id="main">
+    <!-- section des photographes, qui sera générée dynamiquement par JavaScript -->
     <section class="photographer_section"></section>
   </main>
 
+  <!-- inclusion des scripts JavaScript -->
   <script src="./scripts/factories/photographer.js"></script>
   <script src="./scripts/pages/index.js"></script>
 
-  
 </body>
 
 </html>
