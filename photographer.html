@@ -57,46 +57,45 @@
       </header>
 
       <form novalidate name="contact" id="contact">
-        <div class="formData">
+        <div class="form-data">
           <label for="first">Prénom</label>
           <input class="text-control" type="text" id="first" name="first" aria-required="true" />
           
         </div>
-        <div class="formData">
+        <div class="form-data">
           <label for="last">Nom</label>
           <input class="text-control" type="text" id="last" name="last" aria-required="true" />
         </div>
-        <div class="formData" data-error="Adresse email invalide">
+        <div class="form-data" data-error="Adresse email invalide">
           <label for="email">E-mail</label>
           <input class="text-control" type="email" id="email" name="email" aria-required="true" />
         </div>
-        <div class="formData" data-error="Décrivez moi votre projet">
+        <div class="form-data" data-error="Décrivez moi votre projet">
           <label for="request">Votre message</label>
           <textarea class="text-control" id="request" name="request" aria-required="true"></textarea>
         </div>
-        <div class="thanks">Merci pour votre Demande</div>
+        <div class="thanks-field">Merci pour votre demande !</div>
         <input class="contact_button" type="submit" value="Envoyer" id="btnSubmit" />
       </form>
     </div>
   </div>
 
-  <!--lightbox-->
   <div class="lightbox-photographer" aria-hidden="true">
     <span class="fa-solid fa-xmark" onclick="closelightbox()" aria-hidden="true" title="close lightbox"></span>
     <ul class="lightbox" aria-label="Our selection of Recipes" id="lightbox-list"></ul>
   </div>
-
   
+
   <script src="./scripts/factories/lightbox.js"></script>
   <script src="./scripts/factories/photographer.js"></script>
   <script src="./scripts/factories/portfolio.js"></script>
   
-
-  
-  <script src="./scripts/utils/contactForm.js"></script>
-  <script src="./scripts/utils/generateMedia.js"></script>
+  <script src="./scripts/utils/form.js"></script>
   <script src="./scripts/utils/getId.js"></script>
-
+  <script src="./scripts/utils/media.js"></script>
+  <script src="./scripts/utils/like.js"></script>
+  <script src="./scripts/utils/menu.js"></script>
+  <script src="./scripts/utils/sort.js"></script>
   
   <script src="./scripts/pages/photographer.js"></script>
 </body>
