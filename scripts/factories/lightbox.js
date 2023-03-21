@@ -1,62 +1,52 @@
+// Factory function pour créer une lightbox
 function lightboxFactory(data) {
   const { title, video } = data;
-  const controlsLeft = generateControl("controls-left", "fa-chevron-left", "Previous");
-  const controlsRight = generateControl("controls-right", "fa-chevron-right", "Next");
 
-  function generateControl(className, iconClass, ariaLabel) {
-    const control = document.createElement("div");
-    control.role = "button";
-    control.className = `controls ${className}`;
-    control.innerHTML = `
-      <span class="img prev-image">
-        <i aria-hidden="true" class="fa-solid ${iconClass}"></i>
-      </span>
-      <p class="sr-only">${ariaLabel}</p>
-    `;
-    return control;
+  // Fonction pour créer un élément de lightbox
+  function createItemlightbox(numItem) {
+    const item = document.createElement("li");
+    item.className = `lightbox-item item-${numItem}`;
+    item.setAttribute("aria-hidden", numItem === 0 ? false : true);
+    item.innerHTML = `
+      <div role="button" class="controls controls-left">
+        <span class="img prev-image">
+          <i aria-hidden="true" class="fa-solid fa-chevron-left"></i>
+        </span>
+        <p class="sr-only">Previous</p>
+      </div>
+      <div role="button" class="controls controls-right">
+        <span class="img next-image">
+          <i aria-hidden="true" class="fa-solid fa-chevron-right"></i>
+        </span>
+        <p class="sr-only">Next</p>
+      </div>`;
+
+    // Ajouter le contenu média généré dynamiquement
+    item.appendChild(generateMedialightbox());
+    return item;
   }
 
-
-  // Function création media lightbox
-  function generateMediaLightbox() {
+  // Fonction pour générer le contenu média de la lightbox
+  function generateMedialightbox() {
     const wrapper = document.createElement("div");
     wrapper.className = "lightbox-content";
 
+    // Générer le contenu média approprié
     const media = generateMedia(data);
     media.className = "lightbox-media";
-    if (video) {
-      media.controls = true;
-    }
+    if (video) media.setAttribute("controls", true);
 
-    const btnPlay = document.createElement("button");
-    btnPlay.className = "btn-play";
-    btnPlay.onclick = () => playLightbox(btnPlay);
-    btnPlay.setAttribute("aria-label", "pause lightbox");
-    btnPlay.innerHTML = '<i class="fa-solid fa-pause"></i>';
-
+    // Générer le contenu texte
     const textContent = document.createElement("div");
     textContent.className = "text-content";
     const mediaText = document.createElement("p");
     mediaText.className = "lightbox-title";
     mediaText.textContent = title;
 
-    wrapper.appendChild(media);
-    wrapper.appendChild(textContent);
     textContent.appendChild(mediaText);
-    textContent.appendChild(btnPlay);
-
+    wrapper.append(media, textContent);
     return wrapper;
   }
 
-  function createItemLightbox(numItem) {
-    const item = document.createElement("li");
-    item.className = `lightbox-item item-${numItem}`;
-    item.setAttribute("aria-hidden", numItem === 0 ? false : true);
-    item.appendChild(controlsLeft);
-    item.appendChild(controlsRight);
-    item.appendChild(generateMediaLightbox());
-    return item;
-  }
-
-  return { createItemLightbox };
+  return { createItemlightbox };
 }

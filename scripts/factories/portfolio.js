@@ -21,7 +21,7 @@ function portfolioFactory(data) {
     const link = document.createElement("a");
     link.href = "#";
     link.tabIndex = 0;
-    link.setAttribute("onclick", `displaycarousel(${index})`);
+    link.setAttribute("onclick", `displaylightbox(${index})`);
     link.appendChild(generateMedia(data));
 
     // Génération du texte de la galerie en utilisant les données fournies et une icône de coeur qui peut être cliquée pour ajouter ou supprimer une indication de like

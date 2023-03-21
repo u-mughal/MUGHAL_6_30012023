@@ -1,3 +1,19 @@
+// Attendre que le DOM soit chargé avant d'exécuter le code
+document.addEventListener("DOMContentLoaded", async () => {
+    const [dataPhotographer, dataMedia] = await Promise.all([getDataPhotographer(), getMediaFromJson()]);
+    const totalLikes = calculateTotalLikes(dataMedia);
+    const mergeDataPhotographer = addTotalLikesToPhotographer(dataPhotographer, totalLikes);
+    const mergeDataMedia = mergeMedia(dataPhotographer, dataMedia);
+
+    DisplayPortfolioHeader(mergeDataPhotographer);
+    setContactName(dataPhotographer);
+    DisplayPortfolioCard(mergeDataMedia);
+    addStickyTotalLikesToBody(mergeDataPhotographer);
+    makelightbox(mergeDataMedia);
+    initlightboxManager();
+
+});
+
 // Cette fonction récupère les données du photographe et des médias à partir du fichier JSON
 async function fetchData() {
     try {
@@ -6,7 +22,13 @@ async function fetchData() {
             throw new Error('Network response was not ok');
         }
         const data = await response.json();
+        if (!Array.isArray(data.photographers)) {
+            throw new Error('Photographers data is not an array');
+        }
         const photographerId = getParamId();
+        if (isNaN(photographerId)) {
+            throw new Error('Photographer id is not a number');
+        }
         const photographer = data.photographers.find(p => p.id == photographerId);
         if (!photographer) {
             throw new Error(`Photographer with id ${photographerId} not found`);
@@ -84,88 +106,53 @@ function UpdatePortfolioCard(media, idCard) {
     addListenerEventKey();
 }
 
-
-
-// Fonction "calculateTotalLikes" qui calcule le nombre total de "likes" pour toutes les photos d'un photographe.
-function calculateTotalLikes(media) {
-    const totalLikes = media.reduce((acc, { likes }) => acc + likes, 0);
-    return { totalLikes };
+// Cette fonction crée un élément lightbox pour un élément de média donné, en utilisant la factory function lightboxFactory
+function createlightboxItem(element, index) {
+    const factorylightbox = lightboxFactory(element);
+    return factorylightbox.createItemlightbox(index);
 }
 
-// Fonction "addTotalLikesToPhotographer" qui ajoute le nombre total de "likes" à un photographe
-function addTotalLikesToPhotographer(photographer, totalLikes) {
-    return { ...photographer, ...totalLikes };
+// Cette fonction crée une liste d'éléments lightbox à partir d'un tableau de médias donné, en utilisant la fonction createlightboxItem() pour chaque élément de média
+function makelightbox(media) {
+    const wrapper = document.querySelector("#lightbox-list");
+    const lightboxItems = media.map(createlightboxItem);
+    lightboxItems.forEach(item => wrapper.appendChild(item));
 }
 
-// Fonction pour ajouter le nombre total de "likes" sur le sticky
-function addStickyTotalLikesToBody(photographer) {
-    const wrapper = document.body;
-    const factoryPhotographer = photographerFactory(photographer);
-
-    // Supprime le sticky si elle existe.
-    const sticky = document.querySelector(".sticky-price-tag");
-    if (sticky) sticky.remove();
-    wrapper.appendChild(factoryPhotographer.generateStickyForTotalLikes());
+// Cette fonction initialise le manager de lightbox en ajoutant dynamiquement un script au head du document
+function initlightboxManager() {
+    const script = document.createElement("script");
+    script.src = "./scripts/utils/lightbox.js";
+    document.head.appendChild(script);
 }
 
-// Met à jour le nombre total de likes dans la section collante du photographe après un like.
-async function addStickyTotalLikesToBodyAfterLike() {
-    const photographer = await getDataPhotographer();
-    const totalLikes = [...document.querySelectorAll(".gallery-section article[data-likes]")]
-        .reduce((sum, card) => sum + parseInt(card.dataset.likes), 0);
-    addStickyTotalLikesToBody({ ...photographer, totalLikes });
-}
+// Cette fonction affiche la galerie triée
+async function DisplayPortfolioCardBySort(data) {
+    const gallerySection = document.querySelector(".gallery-section");
+    gallerySection.innerHTML = "";
+    const lightboxlist = document.querySelector("#lightbox-list");
+    lightboxlist.innerHTML = "";
 
-// Change l'état "like" d'une carte en cliquant sur l'icône de coeur.
-async function toggleLike(idCard) {
-    const article = document.getElementById(idCard);
-    article.querySelector(".fa-heart").classList.toggle("fa-solid");
-    await updateCardLikes(idCard, article.querySelector(".fa-heart").classList.contains("fa-regular"));
-}
-
-// Met à jour les données de likes d'une carte et appelle addStickyTotalLikesToBodyAfterLike() pour mettre à jour le total des likes.
-async function updateCardLikes(idCard, add) {
-    const card = document.getElementById(idCard);
-    const { likes, liked, ...data } = card.dataset;
-    const updatedData = { likes: parseInt(likes, 10) + (add ? 1 : -1), liked: add, ...data };
-    UpdatePortfolioCard(updatedData, idCard);
-    await addStickyTotalLikesToBodyAfterLike();
-}
-
-// Transforme les données des médias pour les associer au photographe et renvoie un tableau d'objets.
-function transformData(data, photographerFirstName) {
-    return data.map((gallery, index) => ({
-        id: gallery.id, index,
-        date: gallery.date,
-        name: photographerFirstName,
-        title: gallery.title,
-        image: gallery.image,
-        video: gallery.video,
-        likes: gallery.likes,
-        liked: gallery.liked,
+    const { photographer } = await fetchData();
+    const namePhotographer = photographer.name.split(" ");
+    const newData = data.map((achievement, index) => ({
+        ...achievement,
+        index,
+        name: namePhotographer[0],
     }));
+
+    DisplayPortfolioCard(newData);
+    makelightbox(newData);
+    createEventListenerModal();
 }
 
-
-async function init() {
-    const [dataPhotographer, dataMedia] = await Promise.all([getDataPhotographer(), getMediaFromJson()]);
-    const totalLikes = calculateTotalLikes(dataMedia);
-    const mergeDataPhotographer = addTotalLikesToPhotographer(dataPhotographer, totalLikes);
-    const mergeDataMedia = mergeMedia(dataPhotographer, dataMedia);
-
-    DisplayPortfolioHeader(mergeDataPhotographer);
-    setContactName(dataPhotographer);
-    DisplayPortfolioCard(mergeDataMedia);
-    addStickyTotalLikesToBody(mergeDataPhotographer);
-
-
-}
-
+// Fonction qui ajoute des écouteurs d'événements "keydown" aux liens et icônes "heart" des cartes du portfolio.
 function addListenerEventKey() {
     const gallerySection = document.querySelector(".gallery-section");
     const articleLinks = gallerySection.querySelectorAll("article a");
     const heartIcons = gallerySection.querySelectorAll("article .fa-heart");
 
+    // Fonction qui gère les événements "keydown" sur les cartes du portfolio.
     const handleCardKeyDown = (event) => {
         const lightbox = document.querySelector(".lightbox-photographer");
         const lightboxIsClose = lightbox.getAttribute("aria-hidden");
@@ -175,10 +162,12 @@ function addListenerEventKey() {
         }
     };
 
+    // Ajoute un écouteur d'événements "keydown" une fois sur chaque lien de carte du portfolio.
     articleLinks.forEach((link) => {
         link.addEventListener("keydown", handleCardKeyDown, { once: true });
     });
 
+    // Ajoute un écouteur d'événements "keydown" sur chaque icône "heart" de carte du portfolio.
     heartIcons.forEach((icon) => {
         icon.addEventListener("keydown", (event) => {
             if (event.key === "Enter") {
@@ -189,6 +178,6 @@ function addListenerEventKey() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    await init();
+    // Appelle la fonction "addListenerEventKey" lors du chargement initial du DOM.
     addListenerEventKey();
 });
