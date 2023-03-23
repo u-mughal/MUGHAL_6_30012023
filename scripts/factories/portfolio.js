@@ -1,10 +1,20 @@
-function portfolioFactory(data) {
-  // Décomposition de l'objet 'data' pour une utilisation plus facile
-  const { date, id, name, title, image, video, likes, liked } = data;
+/**
+ * Cette fonction génère une carte de portfolio à partir des données fournies
+ *
+ * @param {Object} data - Les données à utiliser pour générer la carte de portfolio
+ * @returns {Object} - Un objet contenant la fonction 'generatePortfolioCard' pour créer une carte de portfolio
+ */
 
-  // Définition de la fonction en dehors de l'objet retourné pour éviter la création de la fonction à chaque appel
+function portfolioFactory(data) {
+
+  const { date, id, name, title, image, video, likes, liked } = data;
+  /**
+   * Cette fonction génère une carte de portfolio pour une image ou une vidéo
+   *
+   * @param {number} index - L'index de la carte de portfolio dans la liste
+   * @returns {HTMLElement} - L'élément HTML contenant la carte de portfolio générée à partir des données
+   */
   function generatePortfolioCard(index) {
-    // Création de l'élément 'article' avec les attributs nécessaires
     const article = document.createElement("article");
     article.setAttribute("id", id);
     article.setAttribute("data-id", id);
@@ -17,14 +27,12 @@ function portfolioFactory(data) {
     article.setAttribute("data-likes", likes);
     article.setAttribute("data-liked", liked);
 
-    // Création d'un lien pour contenir le média généré à partir des données
     const link = document.createElement("a");
     link.href = "#";
     link.tabIndex = 0;
     link.setAttribute("onclick", `displaylightbox(${index})`);
     link.appendChild(generateMedia(data));
 
-    // Génération du texte de la galerie en utilisant les données fournies et une icône de coeur qui peut être cliquée pour ajouter ou supprimer une indication de like
     const GalleryText = `
       <p>      
         ${title} 
@@ -45,16 +53,16 @@ function portfolioFactory(data) {
         </span>      
       </p>
     `;
-
-    // Ajout du lien et du texte de la galerie à l'article
     article.insertAdjacentHTML("beforeend", link.outerHTML + GalleryText);
-
-    // Retourne l'article avec les données et le texte de la galerie
     return article;
   }
-
-  // Retourne un objet à partir des données fournies
   return {
+    /**
+    * Génère une carte de galerie à partir des données fournies.
+    *
+    * @param {number} index - L'indice de la carte dans la liste de galerie.
+    * @returns {HTMLElement} L'élément HTML contenant les données et le texte de la galerie.
+    */
     generatePortfolioCard,
   };
 }

@@ -1,38 +1,61 @@
-// Récupération des boutons de navigation et des éléments de la lightbox
+/**
+Récupère tous les boutons "précédent" de la lightbox.
+@type {NodeList}
+Récupère tous les boutons "suivant" de la lightbox.
+@type {NodeList}
+Récupère tous les éléments de la lightbox.
+@type {NodeList}
+Récupère le bouton pour fermer la lightbox.
+@type {Element}
+Récupère l'élément conteneur de la galerie.
+@type {Element}
+*/
+
 const prevBtn = document.querySelectorAll(".prev-image");
 const nextBtn = document.querySelectorAll(".next-image");
 const lightboxItems = document.querySelectorAll(".lightbox-item");
 const closeBtn = document.querySelector(".lightbox-photographer");
 const sectionWrapper = document.querySelector(".gallery-section");
 
-// Définition de la position actuelle de l'élément dans la lightbox et de l'intervalle de la lightbox
+/**
+Stocke la position actuelle de l'élément dans la lightbox.
+@type {number}
+Stocke l'ID de l'intervalle pour l'animation de la lightbox.
+@type {number}
+*/
+
 let currentItemPosition = 0;
 let lightboxInterval;
 
-// Fonction pour afficher la lightbox
+/**
+ * Affiche la lightbox à partir de l'élément sélectionné.
+ *
+ * @param {number} index - L'indice de l'élément sélectionné.
+ * @return {void}
+ */
+
 function displaylightbox(index) {
     toggleFocusCard();
     sectionWrapper.setAttribute("aria-hidden", true);
     const lightbox = document.querySelector(".lightbox-photographer");
-    // Mise à jour de la position actuelle
     currentItemPosition = index;
     let lastItem = null;
-    // Détermination de l'élément précédent à afficher
     if (currentItemPosition === 0) {
         lastItem = `.item-${lightboxItems.length - 1}`;
     } else {
         lastItem = `.item-${currentItemPosition - 1}`;
     }
     const currentItem = `.item-${currentItemPosition}`;
-    // Affichage de l'élément sélectionné
     setNodeAttributes(lastItem, currentItem);
     lightbox.style.display = "block";
     lightbox.setAttribute("aria-hidden", false);
 }
 
-// Fonction pour fermer la lightbox
+/**
+*Fonction qui ferme la lightbox et restaure la navigation au clavier sur les éléments de la galerie.
+*/
+
 const closelightbox = () => {
-    // Restauration de la navigation au clavier sur les éléments de la galerie
     toggleFocusCard((add = true));
     addListenerEventKey();
     const lightbox = document.querySelector(".lightbox-photographer");
@@ -40,26 +63,23 @@ const closelightbox = () => {
     lightbox.setAttribute("aria-hidden", true);
     sectionWrapper.setAttribute("aria-hidden", false);
     currentItemPosition = 0;
-    // Masquage de tous les éléments de la lightbox
     document.querySelectorAll(".lightbox-item").forEach((item) => {
         item.style.display = "none";
     });
-    // Arrêt de l'intervalle de la lightbox
     clearInterval(lightboxInterval);
 };
 
-// Fonctions pour naviguer dans la lightbox
+/**
+Permet de passer à l'élément suivant de la lightbox.
+*/
+
 const goToNextSlide = () => {
     if (currentItemPosition + 1 >= lightboxItems.length) {
-        // Si on atteint la fin de la lightbox, affichage du premier élément
         const lastItem = `.item-${currentItemPosition}`;
-
         currentItemPosition = 0;
         const currentItem = `.item-${currentItemPosition}`;
-
         setNodeAttributes(lastItem, currentItem);
     } else {
-        // Sinon, affichage de l'élément suivant
         currentItemPosition += 1;
         const lastItem = `.item-${currentItemPosition - 1}`;
         const currentItem = `.item-${currentItemPosition}`;
@@ -67,17 +87,17 @@ const goToNextSlide = () => {
     }
 };
 
-// Fonction pour passer à l'élément précédent dans la lightbox
+/**
+Cette fonction permet de naviguer vers l'élément précédent de la galerie d'images
+*/
+
 const goToPreviousSlide = () => {
     if (currentItemPosition - 1 >= 0) {
-        // Si on n'est pas sur le premier élément, affichage de l'élément précédent
         currentItemPosition -= 1;
         const currentItem = `.item-${currentItemPosition}`;
         const lastItem = `.item-${currentItemPosition + 1}`;
-
         setNodeAttributes(lastItem, currentItem);
     } else {
-        // Sinon, affichage du dernier élément
         const lastItem = `.item-${currentItemPosition}`;
 
         currentItemPosition = lightboxItems.length - 1;
@@ -86,7 +106,12 @@ const goToPreviousSlide = () => {
     }
 };
 
-// Cette fonction permet de définir les attributs de deux éléments HTML en fonction de leur visibilité dans la page
+/**
+Cette fonction permet de définir les attributs de deux éléments HTML en fonction de leur visibilité dans la page
+@param {string} lastItem - Le sélecteur CSS de l'élément précédent
+@param {string} currentItem - Le sélecteur CSS de l'élément actuel
+*/
+
 const setNodeAttributes = (lastItem, currentItem) => {
     lastItem = document.querySelector(lastItem);
     currentItem = document.querySelector(currentItem);
@@ -96,7 +121,10 @@ const setNodeAttributes = (lastItem, currentItem) => {
     currentItem.setAttribute("aria-hidden", "false");
 };
 
-// Cette fonction permet de créer des événements sur des boutons pour naviguer dans une galerie d'images
+/**
+Cette fonction crée des événements sur des boutons pour naviguer dans une galerie d'images
+*/
+
 const createEventListenerModal = () => {
     const prevBtn = document.querySelectorAll(".prev-image");
     const nextBtn = document.querySelectorAll(".next-image");
@@ -115,7 +143,11 @@ const createEventListenerModal = () => {
         });
 };
 
-// Cette fonction permet de mettre en surbrillance les éléments de la galerie d'images lorsqu'ils sont sélectionnés
+/**
+Cette fonction permet de basculer l'accessibilité clavier des cartes et des icônes de cœur dans une galerie de cartes.
+@param {boolean} add - Si vrai, active l'accessibilité clavier. Si faux, désactive l'accessibilité clavier.
+*/
+
 const toggleFocusCard = (add) => {
     const article = document.querySelectorAll(".gallery-section article a");
     const heartLike = document.querySelectorAll(

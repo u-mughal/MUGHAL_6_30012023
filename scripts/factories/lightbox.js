@@ -1,8 +1,16 @@
-// Factory function pour créer une lightbox
+/**
+Cette fonction génère une factory pour créer une lightbox.
+Elle prend en paramètre un objet data contenant le titre et le média de la lightbox.
+Elle renvoie un objet avec une méthode createItemlightbox pour créer un élément de lightbox.
+@param {Object} data - Les données de la lightbox, contenant le titre et le média.
+@param {string} data.title - Le titre de la lightbox.
+@param {string} data.video - Le média de la lightbox, pouvant être une vidéo.
+@returns {Object} - Un objet avec une méthode createItemlightbox pour créer un élément de lightbox.
+*/
+
 function lightboxFactory(data) {
   const { title, video } = data;
 
-  // Fonction pour créer un élément de lightbox
   function createItemlightbox(numItem) {
     const item = document.createElement("li");
     item.className = `lightbox-item item-${numItem}`;
@@ -21,22 +29,24 @@ function lightboxFactory(data) {
         <p class="sr-only">Next</p>
       </div>`;
 
-    // Ajouter le contenu média généré dynamiquement
     item.appendChild(generateMedialightbox());
     return item;
   }
 
-  // Fonction pour générer le contenu média de la lightbox
+  /**
+  Cette fonction génère le contenu média de la lightbox.
+  @function generateMedialightbox
+  @returns {HTMLElement} - Un élément HTML contenant le contenu média et texte de la lightbox.
+  */
+
   function generateMedialightbox() {
     const wrapper = document.createElement("div");
     wrapper.className = "lightbox-content";
 
-    // Générer le contenu média approprié
     const media = generateMedia(data);
     media.className = "lightbox-media";
     if (video) media.setAttribute("controls", true);
 
-    // Générer le contenu texte
     const textContent = document.createElement("div");
     textContent.className = "text-content";
     const mediaText = document.createElement("p");
@@ -47,6 +57,13 @@ function lightboxFactory(data) {
     wrapper.append(media, textContent);
     return wrapper;
   }
+
+  /**
+  Cette méthode crée un élément de lightbox.
+  @function createItemlightbox
+  @param {number} numItem - Le numéro de l'élément de lightbox à créer.
+  @returns {HTMLElement} - Un élément HTML représentant l'élément de lightbox créé.
+  */
 
   return { createItemlightbox };
 }

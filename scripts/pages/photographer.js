@@ -1,8 +1,36 @@
-// Attendre que le DOM soit chargé avant d'exécuter le code
+/**
+ * Cette fonction est exécutée lorsque le DOM est chargé et permet d'initialiser la page.
+ * @async
+ */
+
 document.addEventListener("DOMContentLoaded", async () => {
+
+    /**
+     * On récupère les données du photographe et des médias.
+     * @type {Array<Object>} - Un tableau contenant les données du photographe et des médias.
+     */
+
     const [dataPhotographer, dataMedia] = await Promise.all([getDataPhotographer(), getMediaFromJson()]);
+
+    /**
+     * On calcule le nombre total de likes de tous les médias.
+     * @type {number} - Le nombre total de likes.
+     */
+
     const totalLikes = calculateTotalLikes(dataMedia);
+
+    /**
+     * On ajoute le nombre total de likes au profil du photographe.
+     * @type {Object} - Les données du photographe incluant le nombre total de likes.
+     */
+
     const mergeDataPhotographer = addTotalLikesToPhotographer(dataPhotographer, totalLikes);
+
+    /**
+     * On fusionne les données du photographe et des médias.
+     * @type {Array<Object>} - Un tableau contenant les données fusionnées du photographe et des médias.
+     */
+
     const mergeDataMedia = mergeMedia(dataPhotographer, dataMedia);
 
     DisplayPortfolioHeader(mergeDataPhotographer);
@@ -14,7 +42,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 });
 
-// Cette fonction récupère les données du photographe et des médias à partir du fichier JSON
+/**
+
+Fonction asynchrone qui effectue une requête fetch sur le fichier JSON des photographes,
+puis vérifie si la réponse est ok et si les données des photographes sont bien un tableau.
+Ensuite, elle vérifie si l'ID du photographe dans l'URL est bien un nombre et récupère
+les données du photographe et des médias correspondant à cet ID. En cas d'erreur, elle
+retourne un objet avec un photographe null et un tableau vide de médias.
+@returns {Object} - L'objet contenant les données du photographe et les médias.
+*/
+
 async function fetchData() {
     try {
         const response = await fetch('./data/photographers.json');
@@ -41,19 +78,32 @@ async function fetchData() {
     }
 }
 
-// Cette fonction récupère uniquement les données du photographe en utilisant la fonction fetchData()
+/**
+Fonction asynchrone qui utilise la fonction fetchData() pour récupérer uniquement les données du photographe.
+@returns {Object} - L'objet contenant les données du photographe.
+*/
+
 async function getDataPhotographer() {
     const { photographer } = await fetchData();
     return photographer;
 }
 
-// Cette fonction récupère uniquement les données des médias en utilisant la fonction fetchData()
+/**
+Fonction asynchrone qui utilise la fonction fetchData() pour récupérer uniquement les données des médias.
+@returns {Array} - Le tableau contenant les données des médias.
+*/
+
 async function getMediaFromJson() {
     const { media } = await fetchData();
     return media;
 }
 
-// Cette fonction affiche l'en-tête du photographe
+/**
+ * Affiche l'en-tête du portfolio du photographe.
+ *
+ * @param {object} photographer - Le photographe dont l'en-tête doit être affiché.
+ */
+
 function DisplayPortfolioHeader(photographer) {
     const wrapper = document.querySelector(".photograph-header");
     const factoryPhotographer = photographerFactory(photographer);
@@ -61,7 +111,12 @@ function DisplayPortfolioHeader(photographer) {
     wrapper.appendChild(headerPhotographer);
 }
 
-// Cette fonction définit le nom du photographe pour le formulaire de contact
+/**
+ * Définit le nom du photographe pour le formulaire de contact.
+ *
+ * @param {object} photographer - Le photographe dont le nom sera utilisé.
+ */
+
 function setContactName(photographer) {
     const modal = document.getElementById("contact_modal");
     const name = photographer.name;
@@ -71,13 +126,26 @@ function setContactName(photographer) {
     modalTitle.innerHTML = `Contactez-moi<br/> ${name}`;
 }
 
-// Cette fonction fusionne les données du photographe et des médias
+/**
+ * Fusionne les données du photographe et des médias.
+ *
+ * @param {object} photographer - Le photographe.
+ * @param {array} media - Les médias à fusionner avec les données du photographe.
+ * @returns {array} - Un tableau contenant les médias fusionnés avec les données du photographe.
+ */
+
 function mergeMedia(photographer, media) {
     const name = { name: photographer.name.split(" ")[0] };
     return media.map((element) => ({ ...name, ...element }));
 }
 
-// Cette fonction crée les cartes de portfolio pour chaque média
+/**
+ * Crée les cartes de portfolio pour chaque média.
+ *
+ * @param {array} media - Les médias pour lesquels des cartes de portfolio doivent être créées.
+ * @returns {array} - Un tableau contenant les cartes de portfolio pour chaque média.
+ */
+
 function generatePortfolioCards(media) {
     const portfolioCards = media.map((element, index) => {
         const factoryPortfolio = portfolioFactory(element);
@@ -86,7 +154,12 @@ function generatePortfolioCards(media) {
     return portfolioCards;
 }
 
-// Cette fonction affiche l'en-tête du photographe
+/**
+ * Affiche la carte de portfolio pour chaque élément de média
+ *
+ * @param {Object[]} media - Un tableau d'objets de données médias
+ */
+
 function DisplayPortfolioCard(media) {
     const wrapper = document.querySelector(".gallery-section");
     media.forEach((element, index) => {
@@ -96,7 +169,13 @@ function DisplayPortfolioCard(media) {
     });
 }
 
-// Cette fonction met à jour une carte de portfolio spécifique
+/**
+ * Met à jour une carte de portfolio spécifique
+ *
+ * @param {Object} media - Un objet de données média
+ * @param {string} idCard - L'ID de la carte de portfolio à mettre à jour
+ */
+
 function UpdatePortfolioCard(media, idCard) {
     const wrapper = document.getElementById(idCard);
     const index = wrapper.dataset.index;
@@ -106,27 +185,45 @@ function UpdatePortfolioCard(media, idCard) {
     addListenerEventKey();
 }
 
-// Cette fonction crée un élément lightbox pour un élément de média donné, en utilisant la factory function lightboxFactory
+/**
+ * Crée un élément lightbox pour un élément de média donné, en utilisant la factory function lightboxFactory
+ *
+ * @param {Object} element - Un objet de données média
+ * @param {number} index - L'index de l'élément dans le tableau des médias
+ * @returns {HTMLElement} - L'élément HTML de la lightbox
+ */
+
 function createlightboxItem(element, index) {
     const factorylightbox = lightboxFactory(element);
     return factorylightbox.createItemlightbox(index);
 }
 
-// Cette fonction crée une liste d'éléments lightbox à partir d'un tableau de médias donné, en utilisant la fonction createlightboxItem() pour chaque élément de média
+/**
+* Crée une liste d'éléments lightbox à partir d'un tableau de médias donné, en utilisant la fonction createlightboxItem() pour chaque élément de média
+* @param {Array} media - Un tableau de médias
+*/
+
 function makelightbox(media) {
     const wrapper = document.querySelector("#lightbox-list");
     const lightboxItems = media.map(createlightboxItem);
     lightboxItems.forEach(item => wrapper.appendChild(item));
 }
 
-// Cette fonction initialise le manager de lightbox en ajoutant dynamiquement un script au head du document
+/**
+Initialise la lightbox en ajoutant dynamiquement un script au head du document
+*/
+
 function initlightboxManager() {
     const script = document.createElement("script");
     script.src = "./scripts/utils/lightbox.js";
     document.head.appendChild(script);
 }
 
-// Cette fonction affiche la galerie triée
+/**
+* Affiche la galerie triée
+* @param {Array} data - Un tableau de données
+*/
+
 async function DisplayPortfolioCardBySort(data) {
     const gallerySection = document.querySelector(".gallery-section");
     gallerySection.innerHTML = "";
@@ -146,13 +243,22 @@ async function DisplayPortfolioCardBySort(data) {
     createEventListenerModal();
 }
 
-// Fonction qui ajoute des écouteurs d'événements "keydown" aux liens et icônes "heart" des cartes du portfolio.
+
+/**
+ * Ajoute des écouteurs d'événements clavier aux éléments de la page pour faciliter l'interaction avec la galerie.
+ */
+
 function addListenerEventKey() {
     const gallerySection = document.querySelector(".gallery-section");
     const articleLinks = gallerySection.querySelectorAll("article a");
     const heartIcons = gallerySection.querySelectorAll("article .fa-heart");
 
-    // Fonction qui gère les événements "keydown" sur les cartes du portfolio.
+    /**
+     * Cette fonction gère les événements "keydown" sur les liens des cartes du portfolio.
+     * Si la touche "Entrée" est appuyée et que la lightbox est fermée, déclenche un clic sur le lien pour ouvrir la lightbox.
+     * @param {Event} event - L'événement à gérer.
+     */
+
     const handleCardKeyDown = (event) => {
         const lightbox = document.querySelector(".lightbox-photographer");
         const lightboxIsClose = lightbox.getAttribute("aria-hidden");
@@ -161,13 +267,16 @@ function addListenerEventKey() {
             event.target.click();
         }
     };
-
-    // Ajoute un écouteur d'événements "keydown" une fois sur chaque lien de carte du portfolio.
     articleLinks.forEach((link) => {
         link.addEventListener("keydown", handleCardKeyDown, { once: true });
     });
 
-    // Ajoute un écouteur d'événements "keydown" sur chaque icône "heart" de carte du portfolio.
+    /**
+     * Cette fonction gère les événements "keydown" sur les icônes "heart" des cartes du portfolio.
+     * Si la touche "Entrée" est appuyée, déclenche un clic sur l'icône pour ajouter ou supprimer des favoris.
+     * @param {Event} event - L'événement à gérer.
+     */
+
     heartIcons.forEach((icon) => {
         icon.addEventListener("keydown", (event) => {
             if (event.key === "Enter") {
@@ -178,6 +287,5 @@ function addListenerEventKey() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    // Appelle la fonction "addListenerEventKey" lors du chargement initial du DOM.
     addListenerEventKey();
 });

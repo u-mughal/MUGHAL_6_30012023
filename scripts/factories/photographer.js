@@ -1,8 +1,18 @@
+/**
+ * Factory pour générer des objets photographe avec leurs données
+ * @param {object} data - Les données d'un photographe
+ * @returns {object} - Un objet avec des fonctions pour générer du HTML avec les données du photographe
+ */
+
 function photographerFactory(data) {
   // Décomposition des propriétés de l'objet data
   const { id, portrait, name, city, country, tagline, price, totalLikes } = data;
 
-  // Fonction pour créer la carte d'un photographe 
+  /**
+  * Fonction pour créer la carte d'un photographe 
+  * @returns {HTMLElement} - Un élément HTML représentant la carte d'un photographe avec les données associées
+  */
+
   function generatePhotographerCard() {
     const article = document.createElement('article');
     article.setAttribute("id", id);
@@ -24,7 +34,11 @@ function photographerFactory(data) {
     return article;
   }
 
-  // Fonction pour créer l'en-tête du profil photographe
+  /**
+   * Fonction pour créer l'en-tête du profil photographe
+   * @returns {HTMLElement} - Un élément HTML représentant l'en-tête du profil photographe avec les données associées
+   */
+
   function generatePhotographerHeader() {
     const wrapper = document.createElement("article");
     wrapper.classList.add("wrapper");
@@ -51,7 +65,12 @@ function photographerFactory(data) {
     );
     return wrapper;
   }
-  // Fonction qui génère le contenu HTML pour le compteur de likes
+
+  /**
+   * Fonction qui génère le contenu HTML pour le compteur de likes
+   * @returns {HTMLElement} - Un élément HTML représentant le compteur de likes avec les données associées
+   */
+
   function generateStickyForTotalLikes() {
     const wrapper = document.createElement("aside");
     wrapper.classList.add("sticky-price-tag");

@@ -1,108 +1,206 @@
-// Sélectionner les éléments HTML nécessaires pour le fonctionnement du composant de sélection personnalisé
+/**
+Le wrapper contenant le select.
+* @type {HTMLElement}
+Le bouton pour ouvrir/fermer le select.
+* @type {HTMLButtonElement}
+La zone d'affichage des valeurs sélectionnées.
+* @type {HTMLElement}
+La liste déroulante des options.
+* @type {HTMLElement}
+La liste des options sélectionnables.
+* @type {NodeListOf<HTMLElement>}
+*/
+
 const selectWrapper = document.querySelector(".wrapper_select");
 const selectButton = document.querySelector(".select_button");
 const buttonValues = document.querySelector(".pseudo_value");
 const listbox = document.querySelector('.select_list [role="listbox"]');
 const options = document.querySelectorAll('.select_list [role="listbox"] [role="option"]');
 
-// Initialiser la variable pour suivre l'ID de l'élément option sélectionné
-let nextId = 0;
 
-// Fonction pour afficher ou masquer la liste déroulante de sélection
-const toggleSelect = (open) => {
-    listbox.style.display = open ? "block" : "none";
-    selectButton.setAttribute("aria-expanded", open);
-};
+/**
+* Indique si le select est ouvert ou non.
+* @type {boolean}
+*/
 
-// Fonction pour ajouter le style à l'élément option sélectionné
-const addStyleOptionSelected = (target) => {
-    target.classList.add("option-selected");
-    options.forEach((option) => {
-        if (option !== target) option.classList.remove("option-selected");
-    });
-    buttonValues.innerText = target.innerText;
-};
+let selectOpen = false;
 
-// Fonction pour définir la mise au point sur un élément option spécifique et ajouter le style à cet élément
-const focusOption = (option, direction) => {
-    option.focus();
-    addStyleOptionSelected(option);
-    nextId = options.indexOf(option) + direction;
-};
+/**
+* Gère l'événement click sur le bouton pour ouvrir/fermer le select.
+* @param {MouseEvent} event - L'événement click.
+*/
 
-// Fonction pour sélectionner une option de la liste
-const selectOption = (option) => {
-    addStyleOptionSelected(option);
-    toggleSelect(false);
-    selectButton.focus();
-};
+selectButton.addEventListener("click", (event) => {
+    toggleVisibiliteSelect(event);
+    focusNextListOption();
+});
 
-// Gérer les événements déclenchés par un clic sur le bouton de sélection ou appui sur la touche "Enter"
-const handleButtonClick = (event) => {
-    if (event.type === "click" || event.key === "Enter") {
-        toggleSelect(true);
-        options[nextId].focus();
-        addStyleOptionSelected(options[nextId]);
-        event.preventDefault();
-    } else if (event.key === "Escape") {
-        toggleSelect(false);
-        selectButton.focus();
-    } else if (event.key === "ArrowDown") {
-        focusOption(options[nextId], 1);
-        event.preventDefault();
-    } else if (event.key === "ArrowUp") {
-        focusOption(options[nextId], -1);
-        event.preventDefault();
-    }
-};
+/**
+* Gère l'événement keydown sur le bouton pour ouvrir/fermer le select.
+* @param {KeyboardEvent} event - L'événement keydown.
+*/
 
-// Gérer les événements déclenchés par un clic sur une option de la liste
-const handleOptionClick = (event) => {
-    selectOption(event.target);
-};
+selectButton.addEventListener("keydown", (event) => {
+    toggleVisibiliteSelect(event);
+});
 
-// Gérer les événements de la touche enfoncée pour une option de la liste
-const handleOptionKeydown = (event) => {
-    switch (event.key) {
-        case "Enter":
-            selectOption(event.target);
-            break;
-        case "Escape":
-            toggleSelect(false);
-            selectButton.focus();
-            break;
-        case "ArrowDown":
-            focusOption(event.target.nextElementSibling, 1);
-            event.preventDefault();
-            break;
-        case "ArrowUp":
-            focusOption(event.target.previousElementSibling, -1);
-            event.preventDefault();
-            break;
-    }
-};
+/**
+* Gère l'événement mouseover sur le bouton pour afficher le style de l'option sélectionnée.
+* @param {MouseEvent} event - L'événement mouseover.
+*/
 
-// Cette fonction est appelée lorsque le focus quitte le select
-const handleFocusout = (event) => {
-    // Si l'élément focusé n'est pas une option, on ferme le select
-    if (event.relatedTarget === null || !event.relatedTarget.classList.contains("option")) {
-        toggleSelect(false);
-    }
-    event.preventDefault();
-};
-
-// On ajoute des écouteurs d'événement au bouton select
-selectButton.addEventListener("click", handleButtonClick);
-selectButton.addEventListener("keydown", handleButtonClick);
 selectButton.addEventListener("mouseover", (event) => {
     addStyleOptionSelected(event.target);
 });
 
-// On ajoute des écouteurs d'événement à chaque option du select
+/**
+* Ajoute les écouteurs d'événements sur chaque option.
+* @param {HTMLElement} option - L'option à écouter.
+*/
+
 options.forEach((option) => {
-    option.addEventListener("click", handleOptionClick);
-    option.addEventListener("keydown", handleOptionKeydown);
+    option.addEventListener("click", (event) => {
+        addStyleOptionSelected(event.target);
+        selectOpen = false;
+        toggleSelect(selectOpen);
+    });
+
+    option.addEventListener("keydown", (event) => {
+        switch (event.key) {
+            case "Enter":
+                event.target.click();
+                return;
+
+            case "Escape":
+                selectOpen = false;
+                toggleSelect(selectOpen);
+                return;
+
+            case "ArrowDown":
+                event.preventDefault();
+                focusNextListOption("down");
+                return;
+
+            case "ArrowUp":
+                event.preventDefault();
+                focusNextListOption("up");
+                return;
+
+            default:
+                return;
+        }
+    });
 });
 
-// On ajoute un écouteur d'événement sur le select pour gérer la perte de focus
-selectWrapper.addEventListener("focusout", handleFocusout);
+/**
+ * Ajoute un écouteur d'événements de focusout pour fermer le select si le focus est perdu.
+ * @param {Event} event - L'événement de focusout.
+ */
+
+selectWrapper.addEventListener("focusout", (event) => {
+    if (
+        event.relatedTarget === null ||
+        event.relatedTarget.classList[0] != "option"
+    ) {
+        selectOpen = false;
+        toggleSelect(selectOpen);
+    }
+    event.preventDefault();
+});
+
+
+/**
+ * @function toggleVisibiliteSelect - Fonction pour basculer la visibilité de la liste de sélection en fonction de l'événement fourni.
+ * @param {KeyboardEvent|MouseEvent} event - L'événement déclencheur de la fonction.
+ */
+
+const toggleVisibiliteSelect = (event) => {
+    if (event.key === "Enter" || event.type === "click") {
+        selectOpen = true;
+        toggleSelect(selectOpen);
+        event.preventDefault();
+    } else if (event.key === "Escape") {
+        selectOpen = false;
+        toggleSelect(selectOpen);
+    } else if (event.key === "ArrowDown") {
+        event.preventDefault();
+        focusNextListOption("down");
+    } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        focusNextListOption("up");
+    }
+};
+
+
+/**
+ * @function toggleSelect -Fonction pour activer ou désactiver l'affichage de la liste de sélection.
+ * @param {boolean} open - Indique si la liste de sélection doit être affichée (true) ou cachée (false).
+ */
+
+const toggleSelect = (open) => {
+    if (open) {
+        listbox.style.display = "block";
+        selectButton.setAttribute("aria-expanded", true);
+    } else {
+        listbox.style.display = "none";
+        selectButton.setAttribute("aria-expanded", false);
+    }
+};
+
+
+/**
+ * @global nextId - Identifiant de l'élément suivant qui sera focus dans la liste.
+ * @type {number}
+ */
+
+let nextId = 0;
+
+/**
+ * @function focusNextListOption - Focus sur l'élément suivant dans la liste déroulante.
+ * @param {string} direction - La direction dans laquelle l'utilisateur se déplace dans la liste.
+ * @returns {void}
+ */
+
+const focusNextListOption = (direction) => {
+    const activeElementId = document.activeElement.id;
+
+    if (activeElementId === "select_button") {
+        options[nextId].focus();
+        addStyleOptionSelected(options[nextId]);
+    } else {
+        const currentElementId = parseInt(document.activeElement.id.split("-")[1]);
+        nextId = direction === "down" ? currentElementId + 1 : currentElementId - 1;
+        if (options.length != "" && nextId >= 0 && nextId <= options.length - 1) {
+            options[nextId].focus();
+            addStyleOptionSelected(options[nextId]);
+        } else {
+            return;
+        }
+    }
+};
+
+
+/**
+ * @function removeSelected - Supprime la classe "option-selected" des options qui ne sont pas sélectionnées.
+ * @param {string} value - La valeur de l'option sélectionnée.
+ * @returns {void}
+ */
+
+const removeSelected = (value) => {
+    options.forEach((option) => {
+        if (option.innerText != value) option.classList.remove("option-selected");
+    });
+};
+
+
+/**
+ * @function addStyleOptionSelected - Ajoute la classe "option-selected" à l'option sélectionnée et met à jour la valeur du bouton.
+ * @param {Element} target - L'élément option sélectionné.
+ * @returns {void}
+ */
+
+const addStyleOptionSelected = (target) => {
+    target.classList.add("option-selected");
+    removeSelected(target.innerText);
+    buttonValues.innerText = target.innerText;
+};
