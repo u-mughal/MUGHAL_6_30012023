@@ -2,35 +2,45 @@
 <html lang="fr">
 
 <head>
+  <!-- Début de la partie head -->
   <link href="css/style.css" rel="stylesheet" type="text/css" />
+  <!-- On définit les métadonnées -->
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Fisheye - portfolio photographe" />
-
+  <!-- On importe l'icône du site -->
   <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <!-- On importe les polices Google et Font Awesome -->
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
     integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- On définit le titre de la page -->  
   <title>Fisheye - photographe</title>
-</head>
-
+</head> 
+<!-- Fin de la partie head -->
 <body>
   <header>
+    <!-- Lien vers la page d'accueil avec l'accessibilité -->
     <a href="index.html" aria-label="Fisheye">
+      <!-- Logo Fisheye avec l'accessibilité -->
       <img src="assets/images/logo.png" class="logo" alt="Fisheye Home page" />
     </a>
   </header>
   <main id="main-photographer" aria-hidden="false">
+    <!-- Div vide destinée à être remplie avec les informations du photographe -->
     <div class="photograph-header"></div>
     <div class="wrapper_select">
+      <!-- Titre du tri avec l'accessibilité -->
       <div class="select_title" id="trie_label">Trier par :</div>
       <div class="select_list">
         <button class="select_button" id="select_button" aria-haspopup="listbox" aria-labelledby="trie_label"
           aria-expanded="false">
+          <!-- Valeur initiale du tri -->
           <div class="pseudo_value">Popularité</div>
         </button>
+        <!-- Liste des options de tri avec l'accessibilité -->
         <ul class="listbox" role="listbox" id="trie_list">
           <li class="option" id="option-0" role="option" tabindex="-1" onclick="orderBy('likes')">
             Popularité
@@ -44,9 +54,11 @@
         </ul>
       </div>
     </div>
+    <!-- Section de la galerie de photos -->
     <section class="gallery-section" aria-hidden="false"></section>
   </main>
-
+  <!-- fin de la section principale -->
+  <!-- Modale de contact -->
   <div id="contact_modal" aria-hidden="true" role="dialog">
     <div class="modal">
       <header>
@@ -54,12 +66,11 @@
         <img src="assets/icons/close.svg" onclick="closeModal()" aria-label="close form contact"
           alt="close form contact" class="close-modal" role="button" />
       </header>
-
+      <!-- Formulaire de contact -->
       <form novalidate name="contact" id="contact">
         <div class="form-data">
           <label for="first">Prénom</label>
           <input class="text-control" type="text" id="first" name="first" aria-required="true" />
-          
         </div>
         <div class="form-data">
           <label for="last">Nom</label>
@@ -78,12 +89,13 @@
       </form>
     </div>
   </div>
-
+  <!-- Balise div pour afficher la lightbox contenant les images du photographe -->
   <div class="lightbox-photographer" aria-hidden="true">
     <span class="fa-solid fa-xmark" onclick="closelightbox()" aria-hidden="true" title="close lightbox"></span>
+    <!-- Liste pour afficher les images de la lightbox -->
     <ul class="lightbox" aria-label="Our selection of Recipes" id="lightbox-list"></ul>
   </div>
-  
+  <!-- Chargement des scripts JavaScript -->
   <script src="./scripts/factories/lightbox.js"></script>
   <script src="./scripts/factories/photographer.js"></script>
   <script src="./scripts/factories/portfolio.js"></script>
