@@ -1,12 +1,15 @@
+/* eslint-disable require-jsdoc */
+/* eslint-disable max-len */
 /**
+// eslint-disable-next-line max-len
 Cette fonction utilise la méthode fetch pour récupérer les données des photographes à partir d'un fichier JSON et les renvoie sous forme d'objet JSON.
 @returns {Promise} une promesse résolue avec les données des photographes
 */
 
 async function getPhotographers() {
-    const response = await fetch('./data/photographers.json');
-    const data = await response.json();
-    return data;
+  const response = await fetch('./data/photographers.json');
+  const data = await response.json();
+  return data;
 }
 
 /**
@@ -15,12 +18,12 @@ Cette fonction affiche les données des photographes sur la page HTML en créant
 */
 
 async function displayData(photographers) {
-    const photographersSection = document.querySelector(".photographer_section");
-    photographers.forEach((photographer) => {
-        const photographerModel = photographerFactory(photographer);
-        const userCardDOM = photographerModel.generatePhotographerCard();
-        photographersSection.appendChild(userCardDOM);
-    });
+  const photographersSection = document.querySelector('.photographer_section');
+  photographers.forEach((photographer) => {
+    const photographerModel = photographerFactory(photographer);
+    const userCardDOM = photographerModel.generatePhotographerCard();
+    photographersSection.appendChild(userCardDOM);
+  });
 };
 
 /**
@@ -28,8 +31,8 @@ Cette fonction initialise le processus d'affichage des données des photographes
 */
 
 async function init() {
-    const { photographers } = await getPhotographers();
-    displayData(photographers);
+  const {photographers} = await getPhotographers();
+  displayData(photographers);
 };
 
 

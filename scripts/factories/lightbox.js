@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable require-jsdoc */
+/* eslint-disable max-len */
 /**
 Cette fonction génère une factory pour créer une lightbox.
 Elle prend en paramètre un objet data contenant le titre et le média de la lightbox.
@@ -9,12 +12,12 @@ Elle renvoie un objet avec une méthode createItemlightbox pour créer un élém
 */
 
 function lightboxFactory(data) {
-  const { title, video } = data;
+  const {title, video} = data;
 
   function createItemlightbox(numItem) {
-    const item = document.createElement("li");
+    const item = document.createElement('li');
     item.className = `lightbox-item item-${numItem}`;
-    item.setAttribute("aria-hidden", numItem === 0 ? false : true);
+    item.setAttribute('aria-hidden', numItem === 0 ? false : true);
     item.innerHTML = `
       <div role="button" class="controls controls-left">
         <span class="img prev-image">
@@ -39,18 +42,19 @@ function lightboxFactory(data) {
   @returns {HTMLElement} - Un élément HTML contenant le contenu média et texte de la lightbox.
   */
 
+  // eslint-disable-next-line require-jsdoc
   function generateMedialightbox() {
-    const wrapper = document.createElement("div");
-    wrapper.className = "lightbox-content";
+    const wrapper = document.createElement('div');
+    wrapper.className = 'lightbox-content';
 
     const media = generateMedia(data);
-    media.className = "lightbox-media";
-    if (video) media.setAttribute("controls", true);
+    media.className = 'lightbox-media';
+    if (video) media.setAttribute('controls', true);
 
-    const textContent = document.createElement("div");
-    textContent.className = "text-content";
-    const mediaText = document.createElement("p");
-    mediaText.className = "lightbox-title";
+    const textContent = document.createElement('div');
+    textContent.className = 'text-content';
+    const mediaText = document.createElement('p');
+    mediaText.className = 'lightbox-title';
     mediaText.textContent = title;
 
     textContent.appendChild(mediaText);
@@ -65,5 +69,5 @@ function lightboxFactory(data) {
   @returns {HTMLElement} - Un élément HTML représentant l'élément de lightbox créé.
   */
 
-  return { createItemlightbox };
+  return {createItemlightbox};
 }

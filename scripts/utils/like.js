@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable require-jsdoc */
+/* eslint-disable max-len */
 /**
  * Fonction qui calcule le nombre total de "likes" pour toutes les photos d'un photographe.
  * @param {Array} media - Tableau d'objets représentant les photos du photographe.
@@ -5,8 +8,8 @@
  */
 
 function calculateTotalLikes(media) {
-    const totalLikes = media.reduce((acc, { likes }) => acc + likes, 0);
-    return { totalLikes };
+  const totalLikes = media.reduce((acc, {likes}) => acc + likes, 0);
+  return {totalLikes};
 }
 
 /**
@@ -17,7 +20,7 @@ function calculateTotalLikes(media) {
  */
 
 function addTotalLikesToPhotographer(photographer, totalLikes) {
-    return { ...photographer, ...totalLikes };
+  return {...photographer, ...totalLikes};
 }
 
 /**
@@ -26,11 +29,11 @@ function addTotalLikesToPhotographer(photographer, totalLikes) {
  */
 
 function addStickyTotalLikesToBody(photographer) {
-    const wrapper = document.body;
-    const factoryPhotographer = photographerFactory(photographer);
-    const sticky = document.querySelector(".sticky-price-tag");
-    if (sticky) sticky.remove();
-    wrapper.appendChild(factoryPhotographer.generateStickyForTotalLikes());
+  const wrapper = document.body;
+  const factoryPhotographer = photographerFactory(photographer);
+  const sticky = document.querySelector('.sticky-price-tag');
+  if (sticky) sticky.remove();
+  wrapper.appendChild(factoryPhotographer.generateStickyForTotalLikes());
 }
 
 /**
@@ -40,10 +43,10 @@ function addStickyTotalLikesToBody(photographer) {
  */
 
 async function addStickyTotalLikesToBodyAfterLike() {
-    const photographer = await getDataPhotographer();
-    const totalLikes = [...document.querySelectorAll(".gallery-section article[data-likes]")]
-        .reduce((sum, card) => sum + parseInt(card.dataset.likes), 0);
-    addStickyTotalLikesToBody({ ...photographer, totalLikes });
+  const photographer = await getDataPhotographer();
+  const totalLikes = [...document.querySelectorAll('.gallery-section article[data-likes]')]
+      .reduce((sum, card) => sum + parseInt(card.dataset.likes), 0);
+  addStickyTotalLikesToBody({...photographer, totalLikes});
 }
 
 /**
@@ -52,9 +55,9 @@ async function addStickyTotalLikesToBodyAfterLike() {
  */
 
 async function toggleLike(idCard) {
-    const article = document.getElementById(idCard);
-    article.querySelector(".fa-heart").classList.toggle("fa-solid");
-    await updateCardLikes(idCard, article.querySelector(".fa-heart").classList.contains("fa-regular"));
+  const article = document.getElementById(idCard);
+  article.querySelector('.fa-heart').classList.toggle('fa-solid');
+  await updateCardLikes(idCard, article.querySelector('.fa-heart').classList.contains('fa-regular'));
 }
 
 /**
@@ -66,9 +69,10 @@ async function toggleLike(idCard) {
  */
 
 async function updateCardLikes(idCard, add) {
-    const card = document.getElementById(idCard);
-    const { likes, liked, ...data } = card.dataset;
-    const updatedData = { likes: parseInt(likes, 10) + (add ? 1 : -1), liked: add, ...data };
-    UpdatePortfolioCard(updatedData, idCard);
-    await addStickyTotalLikesToBodyAfterLike();
+  const card = document.getElementById(idCard);
+  const {likes, liked, ...data} = card.dataset;
+  const updatedData = {likes: parseInt(likes, 10) + (add ? 1 : -1), liked: add, ...data};
+  // eslint-disable-next-line new-cap
+  UpdatePortfolioCard(updatedData, idCard);
+  await addStickyTotalLikesToBodyAfterLike();
 }

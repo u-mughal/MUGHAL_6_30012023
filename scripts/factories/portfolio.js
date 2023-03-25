@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable require-jsdoc */
+/* eslint-disable max-len */
 /**
  * Cette fonction génère une carte de portfolio à partir des données fournies
  *
@@ -6,31 +9,30 @@
  */
 
 function portfolioFactory(data) {
-
-  const { date, id, name, title, image, video, likes, liked } = data;
+  const {date, id, name, title, image, video, likes, liked} = data;
   /**
    * Cette fonction génère une carte de portfolio pour une image ou une vidéo
    *
    * @param {number} index - L'index de la carte de portfolio dans la liste
-   * @returns {HTMLElement} - L'élément HTML contenant la carte de portfolio générée à partir des données
+   * @return {HTMLElement} - L'élément HTML contenant la carte de portfolio générée à partir des données
    */
   function generatePortfolioCard(index) {
-    const article = document.createElement("article");
-    article.setAttribute("id", id);
-    article.setAttribute("data-id", id);
-    article.setAttribute("data-index", index);
-    article.setAttribute("data-date", date);
-    article.setAttribute("data-name", name);
-    article.setAttribute("data-title", title);
-    article.setAttribute("data-image", image);
-    article.setAttribute("data-video", video);
-    article.setAttribute("data-likes", likes);
-    article.setAttribute("data-liked", liked);
+    const article = document.createElement('article');
+    article.setAttribute('id', id);
+    article.setAttribute('data-id', id);
+    article.setAttribute('data-index', index);
+    article.setAttribute('data-date', date);
+    article.setAttribute('data-name', name);
+    article.setAttribute('data-title', title);
+    article.setAttribute('data-image', image);
+    article.setAttribute('data-video', video);
+    article.setAttribute('data-likes', likes);
+    article.setAttribute('data-liked', liked);
 
-    const link = document.createElement("a");
-    link.href = "#";
+    const link = document.createElement('a');
+    link.href = '#';
     link.tabIndex = 0;
-    link.setAttribute("onclick", `displaylightbox(${index})`);
+    link.setAttribute('onclick', `displaylightbox(${index})`);
     link.appendChild(generateMedia(data));
 
     const GalleryText = `
@@ -39,10 +41,10 @@ function portfolioFactory(data) {
         <span>
           ${likes} 
           <span 
-            class="${liked && liked != "undefined"
-        ? "fa-solid fa-heart"
-        : "fa-regular fa-heart"
-      }" 
+            class="${liked && liked != 'undefined' ?
+        'fa-solid fa-heart' :
+        'fa-regular fa-heart'
+}" 
             title="likes"
             aria-hidden ="false"
             tabindex="0"
@@ -53,7 +55,7 @@ function portfolioFactory(data) {
         </span>      
       </p>
     `;
-    article.insertAdjacentHTML("beforeend", link.outerHTML + GalleryText);
+    article.insertAdjacentHTML('beforeend', link.outerHTML + GalleryText);
     return article;
   }
   return {

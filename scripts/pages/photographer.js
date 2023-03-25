@@ -1,45 +1,49 @@
+/* eslint-disable new-cap */
+/* eslint-disable no-unused-vars */
+/* eslint-disable require-jsdoc */
+/* eslint-disable max-len */
 /**
  * Cette fonction est exécutée lorsque le DOM est chargé et permet d'initialiser la page.
  * @async
  */
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  /**
+       * On récupère les données du photographe et des médias.
+       * @type {Array<Object>} - Un tableau contenant les données du photographe et des médias.
+       */
 
-    /**
-     * On récupère les données du photographe et des médias.
-     * @type {Array<Object>} - Un tableau contenant les données du photographe et des médias.
-     */
+  const [dataPhotographer, dataMedia] = await Promise.all([getDataPhotographer(), getMediaFromJson()]);
 
-    const [dataPhotographer, dataMedia] = await Promise.all([getDataPhotographer(), getMediaFromJson()]);
+  /**
+       * On calcule le nombre total de likes de tous les médias.
+       * @type {number} - Le nombre total de likes.
+       */
 
-    /**
-     * On calcule le nombre total de likes de tous les médias.
-     * @type {number} - Le nombre total de likes.
-     */
+  const totalLikes = calculateTotalLikes(dataMedia);
 
-    const totalLikes = calculateTotalLikes(dataMedia);
+  /**
+       * On ajoute le nombre total de likes au profil du photographe.
+       * @type {Object} - Les données du photographe incluant le nombre total de likes.
+       */
 
-    /**
-     * On ajoute le nombre total de likes au profil du photographe.
-     * @type {Object} - Les données du photographe incluant le nombre total de likes.
-     */
+  const mergeDataPhotographer = addTotalLikesToPhotographer(dataPhotographer, totalLikes);
 
-    const mergeDataPhotographer = addTotalLikesToPhotographer(dataPhotographer, totalLikes);
+  /**
+       * On fusionne les données du photographe et des médias.
+       * @type {Array<Object>} - Un tableau contenant les données fusionnées du photographe et des médias.
+       */
 
-    /**
-     * On fusionne les données du photographe et des médias.
-     * @type {Array<Object>} - Un tableau contenant les données fusionnées du photographe et des médias.
-     */
+  const mergeDataMedia = mergeMedia(dataPhotographer, dataMedia);
 
-    const mergeDataMedia = mergeMedia(dataPhotographer, dataMedia);
-
-    DisplayPortfolioHeader(mergeDataPhotographer);
-    setContactName(dataPhotographer);
-    DisplayPortfolioCard(mergeDataMedia);
-    addStickyTotalLikesToBody(mergeDataPhotographer);
-    makelightbox(mergeDataMedia);
-    initlightboxManager();
-
+  // eslint-disable-next-line new-cap
+  DisplayPortfolioHeader(mergeDataPhotographer);
+  setContactName(dataPhotographer);
+  // eslint-disable-next-line new-cap
+  DisplayPortfolioCard(mergeDataMedia);
+  addStickyTotalLikesToBody(mergeDataPhotographer);
+  makelightbox(mergeDataMedia);
+  initlightboxManager();
 });
 
 /**
@@ -53,29 +57,29 @@ retourne un objet avec un photographe null et un tableau vide de médias.
 */
 
 async function fetchData() {
-    try {
-        const response = await fetch('./data/photographers.json');
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        if (!Array.isArray(data.photographers)) {
-            throw new Error('Photographers data is not an array');
-        }
-        const photographerId = getParamId();
-        if (isNaN(photographerId)) {
-            throw new Error('Photographer id is not a number');
-        }
-        const photographer = data.photographers.find(p => p.id == photographerId);
-        if (!photographer) {
-            throw new Error(`Photographer with id ${photographerId} not found`);
-        }
-        const media = data.media.filter(m => m.photographerId == photographerId);
-        return { photographer, media };
-    } catch (error) {
-        console.error('Error getting data:', error);
-        return { photographer: null, media: [] };
+  try {
+    const response = await fetch('./data/photographers.json');
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
     }
+    const data = await response.json();
+    if (!Array.isArray(data.photographers)) {
+      throw new Error('Photographers data is not an array');
+    }
+    const photographerId = getParamId();
+    if (isNaN(photographerId)) {
+      throw new Error('Photographer id is not a number');
+    }
+    const photographer = data.photographers.find((p) => p.id == photographerId);
+    if (!photographer) {
+      throw new Error(`Photographer with id ${photographerId} not found`);
+    }
+    const media = data.media.filter((m) => m.photographerId == photographerId);
+    return {photographer, media};
+  } catch (error) {
+    console.error('Error getting data:', error);
+    return {photographer: null, media: []};
+  }
 }
 
 /**
@@ -84,8 +88,8 @@ Fonction asynchrone qui utilise la fonction fetchData() pour récupérer uniquem
 */
 
 async function getDataPhotographer() {
-    const { photographer } = await fetchData();
-    return photographer;
+  const {photographer} = await fetchData();
+  return photographer;
 }
 
 /**
@@ -94,8 +98,8 @@ Fonction asynchrone qui utilise la fonction fetchData() pour récupérer uniquem
 */
 
 async function getMediaFromJson() {
-    const { media } = await fetchData();
-    return media;
+  const {media} = await fetchData();
+  return media;
 }
 
 /**
@@ -105,10 +109,10 @@ async function getMediaFromJson() {
  */
 
 function DisplayPortfolioHeader(photographer) {
-    const wrapper = document.querySelector(".photograph-header");
-    const factoryPhotographer = photographerFactory(photographer);
-    const headerPhotographer = factoryPhotographer.generatePhotographerHeader();
-    wrapper.appendChild(headerPhotographer);
+  const wrapper = document.querySelector('.photograph-header');
+  const factoryPhotographer = photographerFactory(photographer);
+  const headerPhotographer = factoryPhotographer.generatePhotographerHeader();
+  wrapper.appendChild(headerPhotographer);
 }
 
 /**
@@ -118,12 +122,12 @@ function DisplayPortfolioHeader(photographer) {
  */
 
 function setContactName(photographer) {
-    const modal = document.getElementById("contact_modal");
-    const name = photographer.name;
-    const modalTitle = modal.querySelector(".modal header h2");
-    modal.setAttribute("aria-describedby", `contactez ${name}`);
-    modalTitle.setAttribute("id", `contactez ${name}`);
-    modalTitle.innerHTML = `Contactez-moi<br/> ${name}`;
+  const modal = document.getElementById('contact_modal');
+  const name = photographer.name;
+  const modalTitle = modal.querySelector('.modal header h2');
+  modal.setAttribute('aria-describedby', `contactez ${name}`);
+  modalTitle.setAttribute('id', `contactez ${name}`);
+  modalTitle.innerHTML = `Contactez-moi<br/> ${name}`;
 }
 
 /**
@@ -135,8 +139,8 @@ function setContactName(photographer) {
  */
 
 function mergeMedia(photographer, media) {
-    const name = { name: photographer.name.split(" ")[0] };
-    return media.map((element) => ({ ...name, ...element }));
+  const name = {name: photographer.name.split(' ')[0]};
+  return media.map((element) => ({...name, ...element}));
 }
 
 /**
@@ -147,11 +151,11 @@ function mergeMedia(photographer, media) {
  */
 
 function generatePortfolioCards(media) {
-    const portfolioCards = media.map((element, index) => {
-        const factoryPortfolio = portfolioFactory(element);
-        return factoryPortfolio.generatePortfolioCard(index);
-    });
-    return portfolioCards;
+  const portfolioCards = media.map((element, index) => {
+    const factoryPortfolio = portfolioFactory(element);
+    return factoryPortfolio.generatePortfolioCard(index);
+  });
+  return portfolioCards;
 }
 
 /**
@@ -161,12 +165,12 @@ function generatePortfolioCards(media) {
  */
 
 function DisplayPortfolioCard(media) {
-    const wrapper = document.querySelector(".gallery-section");
-    media.forEach((element, index) => {
-        const factoryPortfolio = portfolioFactory(element);
-        const portfolioCard = factoryPortfolio.generatePortfolioCard(index);
-        wrapper.appendChild(portfolioCard);
-    });
+  const wrapper = document.querySelector('.gallery-section');
+  media.forEach((element, index) => {
+    const factoryPortfolio = portfolioFactory(element);
+    const portfolioCard = factoryPortfolio.generatePortfolioCard(index);
+    wrapper.appendChild(portfolioCard);
+  });
 }
 
 /**
@@ -177,12 +181,12 @@ function DisplayPortfolioCard(media) {
  */
 
 function UpdatePortfolioCard(media, idCard) {
-    const wrapper = document.getElementById(idCard);
-    const index = wrapper.dataset.index;
-    const factoryPortfolio = portfolioFactory(media);
-    const portfolioCard = factoryPortfolio.generatePortfolioCard(index);
-    wrapper.replaceWith(portfolioCard);
-    addListenerEventKey();
+  const wrapper = document.getElementById(idCard);
+  const index = wrapper.dataset.index;
+  const factoryPortfolio = portfolioFactory(media);
+  const portfolioCard = factoryPortfolio.generatePortfolioCard(index);
+  wrapper.replaceWith(portfolioCard);
+  addListenerEventKey();
 }
 
 /**
@@ -194,8 +198,8 @@ function UpdatePortfolioCard(media, idCard) {
  */
 
 function createlightboxItem(element, index) {
-    const factorylightbox = lightboxFactory(element);
-    return factorylightbox.createItemlightbox(index);
+  const factorylightbox = lightboxFactory(element);
+  return factorylightbox.createItemlightbox(index);
 }
 
 /**
@@ -204,9 +208,9 @@ function createlightboxItem(element, index) {
 */
 
 function makelightbox(media) {
-    const wrapper = document.querySelector("#lightbox-list");
-    const lightboxItems = media.map(createlightboxItem);
-    lightboxItems.forEach(item => wrapper.appendChild(item));
+  const wrapper = document.querySelector('#lightbox-list');
+  const lightboxItems = media.map(createlightboxItem);
+  lightboxItems.forEach((item) => wrapper.appendChild(item));
 }
 
 /**
@@ -214,9 +218,9 @@ Initialise la lightbox en ajoutant dynamiquement un script au head du document
 */
 
 function initlightboxManager() {
-    const script = document.createElement("script");
-    script.src = "./scripts/utils/lightbox.js";
-    document.head.appendChild(script);
+  const script = document.createElement('script');
+  script.src = './scripts/utils/lightbox.js';
+  document.head.appendChild(script);
 }
 
 /**
@@ -225,22 +229,22 @@ function initlightboxManager() {
 */
 
 async function DisplayPortfolioCardBySort(data) {
-    const gallerySection = document.querySelector(".gallery-section");
-    gallerySection.innerHTML = "";
-    const lightboxlist = document.querySelector("#lightbox-list");
-    lightboxlist.innerHTML = "";
+  const gallerySection = document.querySelector('.gallery-section');
+  gallerySection.innerHTML = '';
+  const lightboxlist = document.querySelector('#lightbox-list');
+  lightboxlist.innerHTML = '';
 
-    const { photographer } = await fetchData();
-    const namePhotographer = photographer.name.split(" ");
-    const newData = data.map((achievement, index) => ({
-        ...achievement,
-        index,
-        name: namePhotographer[0],
-    }));
+  const {photographer} = await fetchData();
+  const namePhotographer = photographer.name.split(' ');
+  const newData = data.map((achievement, index) => ({
+    ...achievement,
+    index,
+    name: namePhotographer[0],
+  }));
 
-    DisplayPortfolioCard(newData);
-    makelightbox(newData);
-    createEventListenerModal();
+  DisplayPortfolioCard(newData);
+  makelightbox(newData);
+  createEventListenerModal();
 }
 
 
@@ -249,43 +253,43 @@ async function DisplayPortfolioCardBySort(data) {
  */
 
 function addListenerEventKey() {
-    const gallerySection = document.querySelector(".gallery-section");
-    const articleLinks = gallerySection.querySelectorAll("article a");
-    const heartIcons = gallerySection.querySelectorAll("article .fa-heart");
+  const gallerySection = document.querySelector('.gallery-section');
+  const articleLinks = gallerySection.querySelectorAll('article a');
+  const heartIcons = gallerySection.querySelectorAll('article .fa-heart');
 
-    /**
-     * Cette fonction gère les événements "keydown" sur les liens des cartes du portfolio.
-     * Si la touche "Entrée" est appuyée et que la lightbox est fermée, déclenche un clic sur le lien pour ouvrir la lightbox.
-     * @param {Event} event - L'événement à gérer.
-     */
+  /**
+       * Cette fonction gère les événements "keydown" sur les liens des cartes du portfolio.
+       * Si la touche "Entrée" est appuyée et que la lightbox est fermée, déclenche un clic sur le lien pour ouvrir la lightbox.
+       * @param {Event} event - L'événement à gérer.
+       */
 
-    const handleCardKeyDown = (event) => {
-        const lightbox = document.querySelector(".lightbox-photographer");
-        const lightboxIsClose = lightbox.getAttribute("aria-hidden");
+  const handleCardKeyDown = (event) => {
+    const lightbox = document.querySelector('.lightbox-photographer');
+    const lightboxIsClose = lightbox.getAttribute('aria-hidden');
 
-        if (event.key === "Enter" && lightboxIsClose) {
-            event.target.click();
-        }
-    };
-    articleLinks.forEach((link) => {
-        link.addEventListener("keydown", handleCardKeyDown, { once: true });
+    if (event.key === 'Enter' && lightboxIsClose) {
+      event.target.click();
+    }
+  };
+  articleLinks.forEach((link) => {
+    link.addEventListener('keydown', handleCardKeyDown, {once: true});
+  });
+
+  /**
+       * Cette fonction gère les événements "keydown" sur les icônes "heart" des cartes du portfolio.
+       * Si la touche "Entrée" est appuyée, déclenche un clic sur l'icône pour ajouter ou supprimer des favoris.
+       * @param {Event} event - L'événement à gérer.
+       */
+
+  heartIcons.forEach((icon) => {
+    icon.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.target.click();
+      }
     });
-
-    /**
-     * Cette fonction gère les événements "keydown" sur les icônes "heart" des cartes du portfolio.
-     * Si la touche "Entrée" est appuyée, déclenche un clic sur l'icône pour ajouter ou supprimer des favoris.
-     * @param {Event} event - L'événement à gérer.
-     */
-
-    heartIcons.forEach((icon) => {
-        icon.addEventListener("keydown", (event) => {
-            if (event.key === "Enter") {
-                event.target.click();
-            }
-        });
-    });
+  });
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
-    addListenerEventKey();
+document.addEventListener('DOMContentLoaded', async () => {
+  addListenerEventKey();
 });

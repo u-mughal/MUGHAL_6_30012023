@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable require-jsdoc */
+/* eslint-disable max-len */
 /**
  * Factory pour générer des objets photographe avec leurs données
  * @param {object} data - Les données d'un photographe
@@ -6,19 +9,19 @@
 
 function photographerFactory(data) {
   // Décomposition des propriétés de l'objet data
-  const { id, portrait, name, city, country, tagline, price, totalLikes } = data;
+  const {id, portrait, name, city, country, tagline, price, totalLikes} = data;
 
   /**
-  * Fonction pour créer la carte d'un photographe 
+  * Fonction pour créer la carte d'un photographe
   * @returns {HTMLElement} - Un élément HTML représentant la carte d'un photographe avec les données associées
   */
 
   function generatePhotographerCard() {
     const article = document.createElement('article');
-    article.setAttribute("id", id);
+    article.setAttribute('id', id);
     article.insertAdjacentHTML(
-      "beforeend",
-      `
+        'beforeend',
+        `
       <a href="./photographer.html?id=${id}">
           <img
               alt="${name}"
@@ -29,7 +32,7 @@ function photographerFactory(data) {
       <span>${city}, ${country}</span><br />
       <strong>${tagline}</strong><br />
       ${price}€/jour
-      `
+      `,
     );
     return article;
   }
@@ -40,11 +43,11 @@ function photographerFactory(data) {
    */
 
   function generatePhotographerHeader() {
-    const wrapper = document.createElement("article");
-    wrapper.classList.add("wrapper");
+    const wrapper = document.createElement('article');
+    wrapper.classList.add('wrapper');
     wrapper.insertAdjacentHTML(
-      "beforeend",
-      `
+        'beforeend',
+        `
             <div class="text">
               <h1>${name}</h1>
               <p>
@@ -61,7 +64,7 @@ function photographerFactory(data) {
             <img src="./assets/photographers/${portrait}" 
               alt=""
             />
-        `
+        `,
     );
     return wrapper;
   }
@@ -72,8 +75,8 @@ function photographerFactory(data) {
    */
 
   function generateStickyForTotalLikes() {
-    const wrapper = document.createElement("aside");
-    wrapper.classList.add("sticky-price-tag");
+    const wrapper = document.createElement('aside');
+    wrapper.classList.add('sticky-price-tag');
     const stickyTotalLikes = `
         <p>
           <span>
