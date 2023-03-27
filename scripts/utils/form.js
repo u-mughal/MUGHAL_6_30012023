@@ -36,11 +36,12 @@ Affiche la fenêtre modale de contact et désactive le défilement de la page.
 // eslint-disable-next-line require-jsdoc
 function displayModal() {
   mainPhotographer.setAttribute('aria-hidden', 'true');
-  mainPhotographer.classList.add('no-scroll');
+  mainPhotographer.className = 'no-scroll';
   modal.setAttribute('aria-hidden', 'false');
   modal.style.display = 'block';
   form.elements.first.focus();
 }
+
 
 /**
 Ferme la fenêtre modale de contact et réactive le défilement de la page.
@@ -89,23 +90,22 @@ Vérifie les champs du formulaire avant de soumettre le formulaire et affiche le
 
 const ValidationSubmit = (event) => {
   const validations = ['first', 'last', 'email', 'request'];
-  validations.forEach((validation) => Validation(validation));
-  if (ValidationFirstAndLast(validations[0]) &&
+
+  for (const validation of validations) {
+    validate(validation);
+  }
+  if (
+    ValidationFirstAndLast(validations[0]) &&
         ValidationFirstAndLast(validations[1]) &&
         ValidationEmail() &&
-        ValidationRequest()) {
-    const body = validations.reduce((acc, validation) => {
-      const inputField = event.target && event.target.elements && event.target.elements[validation];
-      if (inputField) {
-        return {...acc, [validation]: inputField.value};
-      }
-      return acc;
-    }, {});
-    showthanks_field();
-    const form = event.target.closest('form');
-    if (form) {
-      form.reset();
+        ValidationRequest()
+  ) {
+    const body = [];
+    for (const validation of validations) {
+      body.push({[validation]: form.elements[validation].value});
     }
+    showthanks_field();
+    form.reset();
     console.log(body);
   }
   event.preventDefault();
@@ -131,38 +131,31 @@ const toggleErrorMessages = (element, etat) => {
  */
 
 const ValidationFirstAndLast = (inputId) => {
+  const patern = /^[^\s][a-zA-Z '.-]{2,}/;
+  const word = /^[a-zA-Z '.-]*$/;
   const element = form.elements[inputId];
-  const value = element.value.trim();
-
-  if (value.length < 2) {
-    console.log(`Le champ ${inputId} doit contenir au moins 2 caractères.`);
+  if (element.value.length >= 2) {
+    if (!patern.test(element.value)) {
+      element.parentNode.dataset.error = `Notre système est incapable de traiter les ${element === 'first' ? 'prénoms' : 'noms'
+      } qui commence par 2 fois ${element.value.trim()[0] === undefined ?
+                    'espace' :
+                    element.value.trim()[0]
+      }`;
+      toggleErrorMessages(element, true);
+      return false;
+    } else if (!word.test(element.value)) {
+      element.parentNode.dataset.error = `Votre ${element === 'first' ? 'prénom' : 'nom'
+      } doit être écrit sans accent et seulement avec les caractères (' . -). Desolé pour la gêne occasionné`;
+      toggleErrorMessages(element, true);
+      return false;
+    }
+    toggleErrorMessages(element, false);
+    return true;
+  } else {
     element.parentNode.dataset.error = 'doit contenir plus de 2 caractéres';
     toggleErrorMessages(element, true);
     return false;
   }
-
-  const forbiddenChars = ['é', 'è', 'ê', 'à', 'â', 'ù', 'ô', 'î', 'ç'];
-  const isForbiddenChar = forbiddenChars.some((char) => value.includes(char));
-
-  if (isForbiddenChar) {
-    console.log(`Le champ ${inputId} contient des caractères interdits.`);
-    element.parentNode.dataset.error = `Votre ${inputId === 'first' ? 'prénom' : 'nom'
-    } doit être écrit sans accent.`;
-    toggleErrorMessages(element, true);
-    return false;
-  }
-
-  const hasConsecutiveSpaces = value.includes('  ');
-  if (hasConsecutiveSpaces) {
-    console.log(`Le champ ${inputId} contient des espaces consécutifs.`);
-    element.parentNode.dataset.error = `Notre système est incapable de traiter les ${inputId === 'first' ? 'prénoms' : 'noms'
-    } qui commence par 2 fois espace.`;
-    toggleErrorMessages(element, true);
-    return false;
-  }
-
-  toggleErrorMessages(element, false);
-  return true;
 };
 
 /**
@@ -173,17 +166,10 @@ Elle vérifie si l'adresse e-mail est valide en cherchant la position de "@" et 
 
 const ValidationEmail = () => {
   const email = form.elements.email;
-  const atPos = email.value.indexOf('@');
-  const dotPos = email.value.lastIndexOf('.');
-  if (atPos < 1 || dotPos < atPos + 2 || dotPos + 2 >= email.value.length) {
-    console.log('L\'adresse e-mail est invalide');
-    toggleErrorMessages(email, true);
-    return false;
-  } else {
-    console.log('L\'adresse e-mail est valide');
-    toggleErrorMessages(email, false);
-    return true;
-  }
+  const isEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+  return isEmail.test(email.value) ?
+        (toggleErrorMessages(email, false), true) :
+        (toggleErrorMessages(email, true), false);
 };
 
 /**
@@ -204,9 +190,10 @@ Cette fonction de validation permet de rediriger les éléments du formulaire ve
 @param {string} input - L'identifiant de l'élément à valider.
 */
 
-const Validation = (input) => {
+const validate = (input) => {
   switch (input) {
     case 'first':
+      return ValidationFirstAndLast(input);
     case 'last':
       return ValidationFirstAndLast(input);
     case 'email':
@@ -222,16 +209,36 @@ const Validation = (input) => {
 Cette fonction attend que le document soit chargé et ajoute les événements de validation sur les éléments du formulaire.
 Elle ajoute également un événement pour la touche Entrée et un événement pour la touche Échap afin de valider le formulaire et de fermer le modal, respectivement.
 */
-
 document.addEventListener('DOMContentLoaded', () => {
   form.addEventListener('submit', ValidationSubmit);
   allInput.forEach((input) => {
-    input.addEventListener('blur', () => Validation(input.id));
-    input.addEventListener('focus', () => toggleErrorMessages(input, false));
+    input.addEventListener(
+        'blur',
+        (e) => {
+          validate(e.currentTarget.id);
+        },
+        false,
+    );
+    input.addEventListener( // Correction de la faute
+        'focus',
+        () => {
+          toggleErrorMessages(input, false);
+        },
+        false,
+    );
   });
   document.addEventListener('keydown', (event) => {
-    const isModalOpen = modal.attributes['aria-hidden'].value === 'false';
-    if (isModalOpen && event.key === 'Enter') ValidationSubmit(event);
-    if (isModalOpen && event.key === 'Escape') closeModal();
+    if (
+      modal.attributes['aria-hidden'].value === 'false' &&
+          event.key === 'Enter'
+    ) {
+      ValidationSubmit(event);
+    }
+    if (
+      event.key === 'Escape' &&
+          modal.attributes['aria-hidden'].value === 'false'
+    ) {
+      closeModal();
+    }
   });
 });
