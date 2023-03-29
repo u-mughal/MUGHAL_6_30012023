@@ -2,52 +2,8 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable require-jsdoc */
 /* eslint-disable max-len */
-/**
- * Cette fonction est exécutée lorsque le DOM est chargé et permet d'initialiser la page.
- * @async
- */
-
-document.addEventListener('DOMContentLoaded', async () => {
-  /**
-       * On récupère les données du photographe et des médias.
-       * @type {Array<Object>} - Un tableau contenant les données du photographe et des médias.
-       */
-
-  const [dataPhotographer, dataMedia] = await Promise.all([getDataPhotographer(), getMediaFromJson()]);
-
-  /**
-       * On calcule le nombre total de likes de tous les médias.
-       * @type {number} - Le nombre total de likes.
-       */
-
-  const totalLikes = calculateTotalLikes(dataMedia);
-
-  /**
-       * On ajoute le nombre total de likes au profil du photographe.
-       * @type {Object} - Les données du photographe incluant le nombre total de likes.
-       */
-
-  const mergeDataPhotographer = addTotalLikesToPhotographer(dataPhotographer, totalLikes);
-
-  /**
-       * On fusionne les données du photographe et des médias.
-       * @type {Array<Object>} - Un tableau contenant les données fusionnées du photographe et des médias.
-       */
-
-  const mergeDataMedia = mergeMedia(dataPhotographer, dataMedia);
-
-  // eslint-disable-next-line new-cap
-  DisplayPortfolioHeader(mergeDataPhotographer);
-  setContactName(dataPhotographer);
-  // eslint-disable-next-line new-cap
-  DisplayPortfolioCard(mergeDataMedia);
-  addStickyTotalLikesToBody(mergeDataPhotographer);
-  makelightbox(mergeDataMedia);
-  initlightboxManager();
-});
 
 /**
-
 Fonction asynchrone qui effectue une requête fetch sur le fichier JSON des photographes,
 puis vérifie si la réponse est ok et si les données des photographes sont bien un tableau.
 Ensuite, elle vérifie si l'ID du photographe dans l'URL est bien un nombre et récupère
@@ -107,6 +63,7 @@ async function getMediaFromJson() {
  *
  * @param {object} photographer - Le photographe dont l'en-tête doit être affiché.
  */
+
 
 function DisplayPortfolioHeader(photographer) {
   const wrapper = document.querySelector('.photograph-header');
@@ -207,6 +164,7 @@ function createlightboxItem(element, index) {
 * @param {Array} media - Un tableau de médias
 */
 
+
 function makelightbox(media) {
   const wrapper = document.querySelector('#lightbox-list');
   const lightboxItems = media.map(createlightboxItem);
@@ -245,8 +203,23 @@ async function DisplayPortfolioCardBySort(data) {
   DisplayPortfolioCard(newData);
   makelightbox(newData);
   createEventListenerModal();
+  addListenerEventKey();
 }
 
+async function init() {
+  const [dataPhotographer, dataMedia] = await Promise.all([getDataPhotographer(), getMediaFromJson()]);
+  const totalLikes = calculateTotalLikes(dataMedia);
+  const mergeDataPhotographer = addTotalLikesToPhotographer(dataPhotographer, totalLikes);
+  const mergeDataMedia = mergeMedia(dataPhotographer, dataMedia);
+  // eslint-disable-next-line new-cap
+  DisplayPortfolioHeader(mergeDataPhotographer);
+  setContactName(dataPhotographer);
+  // eslint-disable-next-line new-cap
+  DisplayPortfolioCard(mergeDataMedia);
+  addStickyTotalLikesToBody(mergeDataPhotographer);
+  makelightbox(mergeDataMedia);
+  initlightboxManager();
+}
 
 /**
  * Ajoute des écouteurs d'événements clavier aux éléments de la page pour faciliter l'interaction avec la galerie.
@@ -274,12 +247,11 @@ function addListenerEventKey() {
   articleLinks.forEach((link) => {
     link.addEventListener('keydown', handleCardKeyDown, {once: true});
   });
-
   /**
-       * Cette fonction gère les événements "keydown" sur les icônes "heart" des cartes du portfolio.
-       * Si la touche "Entrée" est appuyée, déclenche un clic sur l'icône pour ajouter ou supprimer des favoris.
-       * @param {Event} event - L'événement à gérer.
-       */
+         * Cette fonction gère les événements "keydown" sur les icônes "heart" des cartes du portfolio.
+         * Si la touche "Entrée" est appuyée, déclenche un clic sur l'icône pour ajouter ou supprimer des favoris.
+         * @param {Event} event - L'événement à gérer.
+         */
 
   heartIcons.forEach((icon) => {
     icon.addEventListener('keydown', (event) => {
@@ -290,6 +262,15 @@ function addListenerEventKey() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-  addListenerEventKey();
+/**
+ * Attache un écouteur d'événement pour le changement d'état de la page.
+ * Lorsque l'état de la page est "interactive", cela déclenche la fonction d'initialisation asynchrone "init".
+ * Une fois l'initialisation terminée, la fonction "addListenerEventKey" est appelée pour ajouter un écouteur d'événement pour les touches de clavier.
+ */
+
+document.addEventListener('readystatechange', async (event) => {
+  if (event.target.readyState === 'interactive') {
+    await init();
+    addListenerEventKey();
+  }
 });
